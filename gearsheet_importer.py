@@ -22,7 +22,7 @@ def main():
     # scopes = ['weaponmods']
     scopes = ['weapontalents', 'playertalents', 'geartalents', 'gearsets', 'weapons', 'weaponmods']
 
-    login_params = json.dumps({'username': 'bot', 'password': 'confedrate', 'appcode': '1234567890'})
+    login_params = json.dumps({'username': 'bot', 'password': 'confedrate', 'appcode': 'gearsheet'})
     client = http.client.HTTPConnection("localhost:9000")
 
     client.request('POST', '/login', login_params, {'Content-Type': 'application/json'})
