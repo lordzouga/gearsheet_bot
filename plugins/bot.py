@@ -23,7 +23,7 @@ class GearSheetPlugin(Plugin):
         super().__init__(bot, config)
 
         print('Logging in to backend api...')
-        login_params = json.dumps({'username': 'bot', 'password': 'confedrate', 'appcode': '1234567890'})
+        login_params = json.dumps({'username': 'bot', 'password': 'confedrate', 'appcode': 'gearsheet'})
         self.conn = http.client.HTTPConnection("localhost:9000")
 
         self.conn.request('POST', '/login', login_params, {'Content-Type': 'application/json'})

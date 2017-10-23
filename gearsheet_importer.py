@@ -87,7 +87,7 @@ def pull_data_from_scope(scope, session):
 
 def test_plugin():
     print('Logging in to backend api...')
-    login_params = json.dumps({'username': 'bot', 'password': 'confedrate', 'appcode': '1234567890'})
+    login_params = json.dumps({'username': 'bot', 'password': 'confedrate', 'appcode': 'gearsheet'})
     client = http.client.HTTPConnection("localhost:9000")
 
     client.request('POST', '/login', login_params, {'Content-Type': 'application/json'})
