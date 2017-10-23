@@ -1,0 +1,7 @@
+token: 'MzY4Mzk2ODE1MDk3MjY2MTc2.DMJYMQ.Xe7qHMGBX2csdavNEJd2oIiEpec'
+
+bot:
+  commands_require_mention: false
+  commands_prefix: '!'
+  plugins:
+        - plugins.bot
