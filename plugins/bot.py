@@ -65,24 +65,24 @@ class GearSheetPlugin(Plugin):
                 event.msg.reply('```item not found```')
                 return
 
-            response = response['data'][0]
-            collection_name = response['@class']
+            for item in response['data']:
+                collection_name = item['@class']
 
-            embed = None
-            if collection_name == self.WEAPON_TALENTS:
-                embed = self.render_weapon_talent(response)
-            elif collection_name == self.PLAYER_TALENTS:
-                embed = self.render_player_talent(response)
-            elif collection_name == self.GEAR_TALENTS:
-                embed = self.render_gear_talent(response)
-            elif collection_name == self.GEAR_SETS:
-                embed = self.render_gearset(response)
-            elif collection_name == self.WEAPONS:
-                embed = self.render_weapon(response)
-            elif collection_name == self.WEAPON_MODS:
-                embed = self.render_weapon_mods(response)
+                embed = None
+                if collection_name == self.WEAPON_TALENTS:
+                    embed = self.render_weapon_talent(item)
+                elif collection_name == self.PLAYER_TALENTS:
+                    embed = self.render_player_talent(item)
+                elif collection_name == self.GEAR_TALENTS:
+                    embed = self.render_gear_talent(item)
+                elif collection_name == self.GEAR_SETS:
+                    embed = self.render_gearset(item)
+                elif collection_name == self.WEAPONS:
+                    embed = self.render_weapon(item)
+                elif collection_name == self.WEAPON_MODS:
+                    embed = self.render_weapon_mods(item)
 
-            event.msg.reply('```duration: {0:.2f}s```'.format(time_diff), embed=embed)
+                event.msg.reply(embed=embed)
 
             conn.close()
 

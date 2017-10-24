@@ -101,11 +101,11 @@ def test_plugin():
     print('Login successful.')
     session_token = login_response['data']["X-BB-SESSION"]
 
-    client.request('GET', '/plugin/bot.index?%s' % (urllib.parse.urlencode({"param": "Accurate"})),
+    client.request('GET', '/plugin/bot.index?%s' % (urllib.parse.urlencode({"param": "Caduceus"})),
                    headers={'X-BB-SESSION': session_token})
     index_response = json.loads(client.getresponse().read().decode('utf-8'))
 
     print(index_response)
 
-# test_plugin()
-main()
+test_plugin()
+# main()
