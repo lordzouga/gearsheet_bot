@@ -24,9 +24,9 @@ class GearSheetPlugin(Plugin):
 
         print('Logging in to backend api...')
         login_params = json.dumps({'username': 'bot', 'password': 'confedrate', 'appcode': 'gearsheet'})
-        self.conn = http.client.HTTPConnection("localhost:9000")
+        conn = http.client.HTTPConnection("localhost:9000")
 
-        self.conn.request('POST', '/login', login_params, {'Content-Type': 'application/json'})
+        conn.request('POST', '/login', login_params, {'Content-Type': 'application/json'})
         login_response = self.conn.getresponse()
         login_response = json.loads(login_response.read().decode('utf-8'))
 
@@ -46,7 +46,8 @@ class GearSheetPlugin(Plugin):
         if len(event.args) > 0:
             param = ' '.join(event.args)
 
-            self.conn.request('GET', '/plugin/bot.index?%s' % (urllib.parse.urlencode({"param": param.title()})),
+            conn = http.client.HTTPConnection("localhost:9000")
+            conn.request('GET', '/plugin/bot.index?%s' % (urllib.parse.urlencode({"param": param.title()})),
                             headers={'X-BB-SESSION': self.session})
 
             start_time = time.time()
