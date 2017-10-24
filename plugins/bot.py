@@ -8,6 +8,7 @@ import http.client
 import json
 import time
 
+import util
 
 class GearSheetPlugin(Plugin):
     session = ""
@@ -48,6 +49,9 @@ class GearSheetPlugin(Plugin):
         if len(event.args) > 0:
             param = ' '.join(event.args)
 
+            if param.lower() in util.aliases.keys():
+                param = util.aliases[param.lower()]
+
             start_time = time.time()
             conn = http.client.HTTPConnection("localhost:9000")
             conn.request('GET', '/plugin/bot.index?%s' % (urllib.parse.urlencode({"param": param.title()})),
@@ -58,7 +62,7 @@ class GearSheetPlugin(Plugin):
 
             response = json.loads(response)
             if response['result'] != 'ok':
-                event.msg.reply('```command failed```')
+                event.msg.reply('```item not found```')
                 return
 
             response = response['data'][0]
