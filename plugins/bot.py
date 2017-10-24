@@ -51,7 +51,7 @@ class GearSheetPlugin(Plugin):
                             headers={'X-BB-SESSION': self.session})
 
             start_time = time.time()
-            response = self.conn.getresponse().read().decode('utf-8')
+            response = conn.getresponse().read().decode('utf-8')
             time_diff = time.time() - start_time
 
             response = json.loads(response)
