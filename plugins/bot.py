@@ -37,6 +37,8 @@ class GearSheetPlugin(Plugin):
         print('Login successful.')
         self.session = login_response['data']["X-BB-SESSION"]
 
+        conn.close()
+
     @Plugin.command('ping')
     def command_ping(self, event):
         event.msg.reply('Pong!')
@@ -46,11 +48,11 @@ class GearSheetPlugin(Plugin):
         if len(event.args) > 0:
             param = ' '.join(event.args)
 
+            start_time = time.time()
             conn = http.client.HTTPConnection("localhost:9000")
             conn.request('GET', '/plugin/bot.index?%s' % (urllib.parse.urlencode({"param": param.title()})),
                             headers={'X-BB-SESSION': self.session})
 
-            start_time = time.time()
             response = conn.getresponse().read().decode('utf-8')
             time_diff = time.time() - start_time
 
@@ -77,6 +79,8 @@ class GearSheetPlugin(Plugin):
                 embed = self.render_weapon_mods(response)
 
             event.msg.reply('```duration: {0:.2f}s```'.format(time_diff), embed=embed)
+
+            conn.close()
 
     def render_weapon_talent(self, talent):
         embed = MessageEmbed()
