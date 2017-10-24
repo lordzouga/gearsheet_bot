@@ -27,7 +27,7 @@ class GearSheetPlugin(Plugin):
         conn = http.client.HTTPConnection("localhost:9000")
 
         conn.request('POST', '/login', login_params, {'Content-Type': 'application/json'})
-        login_response = self.conn.getresponse()
+        login_response = conn.getresponse()
         login_response = json.loads(login_response.read().decode('utf-8'))
 
         if login_response['result'] != 'ok':
