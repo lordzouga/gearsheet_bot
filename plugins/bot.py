@@ -48,10 +48,10 @@ class GearSheetPlugin(Plugin):
     @Plugin.command('gearsheet')
     def command_talents(self, event):
         if len(event.args) > 0:
-            param = ' '.join(event.args)
+            param = ' '.join(event.args).lower()
 
-            if param.lower() in util.aliases.keys():
-                param = util.aliases[param.lower()].lower()
+            if param in util.aliases.keys():
+                param = util.aliases[param].lower()
 
             start_time = time.time()
             conn = http.client.HTTPConnection("localhost:9000")
