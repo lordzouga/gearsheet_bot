@@ -20,7 +20,7 @@ def main():
     print('Logging in to backend api...')
 
     # scopes = ['weaponmods']
-    scopes = ['weapontalents', 'playertalents', 'geartalents', 'gearsets', 'weapons', 'weaponmods']
+    scopes = ['weapontalents', 'playertalents', 'geartalents', 'gearsets', 'weapons', 'weaponmods', 'exoticgears']
 
     login_params = json.dumps({'username': 'bot', 'password': 'confedrate', 'appcode': 'gearsheet'})
     client = http.client.HTTPConnection("localhost:9000")
@@ -64,7 +64,6 @@ def pull_data_from_scope(scope, session):
     client = http.client.HTTPConnection("localhost:9000")
     for item in data:
         #  print(item)
-        item['name'] = item['name'].title()  # do this for consistent matching
         item_json = json.dumps(item)
         client.request('POST', '/document/%s' % (scope), item_json,
                        {'Content-Type': 'application/json', 'X-BB-SESSION': session})
@@ -76,14 +75,13 @@ def pull_data_from_scope(scope, session):
         item_id = item_add_response['data']['id']
         # add an index for the talent
         print('indexing...')
-        index_json = json.dumps({'name': item['name'], 'collection': scope, 'item_id': item_id})
+        index_json = json.dumps({'name': item['name'].lower(), 'collection': scope, 'item_id': item_id})
         client.request('POST', '/document/indexes', index_json,
                        {'Content-Type': 'application/json', 'X-BB-SESSION': session})
         index_add_response = json.loads(client.getresponse().read().decode('utf-8'))
 
         if result_is_ok(index_add_response):
             print("indexing %s successful" % scope)
-
 
 def test_plugin():
     print('Logging in to backend api...')
@@ -107,5 +105,5 @@ def test_plugin():
 
     print(index_response)
 
-test_plugin()
-# main()
+# test_plugin()
+main()

@@ -19,6 +19,7 @@ class GearSheetPlugin(Plugin):
     GEAR_SETS = 'gearsets'
     WEAPONS = 'weapons'
     WEAPON_MODS = 'weaponmods'
+    EXOTIC_GEARS = 'exoticgears'
 
     def __init__(self, bot, config):
         super().__init__(bot, config)
@@ -50,7 +51,7 @@ class GearSheetPlugin(Plugin):
             param = ' '.join(event.args)
 
             if param.lower() in util.aliases.keys():
-                param = util.aliases[param.lower()]
+                param = util.aliases[param.lower()].lower()
 
             start_time = time.time()
             conn = http.client.HTTPConnection("localhost:9000")
@@ -60,6 +61,7 @@ class GearSheetPlugin(Plugin):
             response = conn.getresponse().read().decode('utf-8')
             time_diff = time.time() - start_time
 
+            print(event.author)
             response = json.loads(response)
             if response['result'] != 'ok':
                 event.msg.reply('```item not found```')
@@ -81,6 +83,8 @@ class GearSheetPlugin(Plugin):
                     embed = self.render_weapon(item)
                 elif collection_name == self.WEAPON_MODS:
                     embed = self.render_weapon_mods(item)
+                elif collection_name == self.EXOTIC_GEARS:
+                    embed = self.render_exotic_gear(item)
 
                 event.msg.reply(embed=embed)
 
@@ -94,7 +98,7 @@ class GearSheetPlugin(Plugin):
         embed.description = talent['description']
 
         req = talent['requirements']['34']
-        req_str = 'electronics: %s, firearms: %s, stamina: %s' % \
+        req_str = '**electronics**: %s, **firearms**: %s, **stamina**: %s' % \
                   ('none' if req['electronics'] == 0 else req['electronics'],
                    'none' if req['firearms'] == 0 else req['firearms'],
                    'none' if req['stamina'] == 0 else req['stamina'])
@@ -173,6 +177,10 @@ class GearSheetPlugin(Plugin):
             if 'note' in weapon['modCompat'].keys():
                 embed.set_footer(text="%s" % weapon['modCompat']['note'])
 
+        if 'talent' in weapon.keys():
+            description = weapon['talent']['description']
+            embed.description = description
+
         return embed
 
     def render_weapon_mods(self, mod):
@@ -192,4 +200,14 @@ class GearSheetPlugin(Plugin):
                               "as well as an additional 2 attributes")
 
         return embed
+
+    def render_exotic_gear(self, exotic_gear):
+        embed = MessageEmbed()
+
+        embed.title = exotic_gear['name']
+        embed.description = exotic_gear['description']
+
+        return embed
+
+
 
