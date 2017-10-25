@@ -55,7 +55,7 @@ class GearSheetPlugin(Plugin):
 
             start_time = time.time()
             conn = http.client.HTTPConnection("localhost:9000")
-            conn.request('GET', '/plugin/bot.index?%s' % (urllib.parse.urlencode({"param": param.title()})),
+            conn.request('GET', '/plugin/bot.index?%s' % (urllib.parse.urlencode({"param": param})),
                             headers={'X-BB-SESSION': self.session})
 
             response = conn.getresponse().read().decode('utf-8')
