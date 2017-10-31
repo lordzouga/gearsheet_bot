@@ -74,11 +74,14 @@ class GearSheetPlugin(Plugin):
 
             response = json.loads(response)
             if response['result'] != 'ok':
-                matches = [i for i in self.names if fuzz.partial_ratio(param, i) > 80]
+                matches = ["**%s**".title() % i for i in self.names if fuzz.partial_ratio(param, i) > 80]
 
                 if len(matches) > 0:
-                    event.msg.reply('```Did you mean %s```' % ', '.join(matches))
-
+                    match_str = "this %s" % ', '.join(matches) if len(matches) == 1 else \
+                        "any of these %s" % ', '.join(matches)
+                    text = "Nothing was found for your search. Consider searching for %s instead" % \
+                           match_str
+                    event.msg.reply('```%s```' % text)
                 else:
                     event.msg.reply('```item not found```')
 
