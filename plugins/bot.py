@@ -4,6 +4,8 @@ from disco.types.message import MessageEmbed  # We need this to create the embed
 import urllib.request
 import urllib.parse
 import http.client
+from fuzzywuzzy import fuzz
+
 
 import json
 import time
@@ -65,7 +67,14 @@ class GearSheetPlugin(Plugin):
 
             response = json.loads(response)
             if response['result'] != 'ok':
-                event.msg.reply('```item not found```')
+                matches = [i for i in util.aliases.keys() if fuzz.partial_ratio(param, i) > 50]
+
+                if len(matches) > 0:
+                    event.msg.reply('```Did you mean %s```' % ', '.join(matches))
+
+                else:
+                    event.msg.reply('```item not found```')
+
                 return
 
             for item in response['data']:
