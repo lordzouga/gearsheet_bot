@@ -17,4 +17,5 @@ aliases = {"lvoa": "Lvoa-C", "lwm4": "Lightweight M4",
            "barret's vest": "Barrett's Bulletproof", "barret's": "Barrett's Bulletproof",
            "barret's chest piece": "Barrett's Bulletproof", "barret's chest": "Barrett's Bulletproof",
            "shortbows": "Shortbow Championship Pads", "shortbow": "Shortbow Championship Pads",
-           "bliss holster": "Colonel Bliss's Holster"}
+           "bliss holster": "Colonel Bliss's Holster", "scar-h": "Military SCAR-H", "svd": "Surplus SVD",
+           "srs": "Covert SRS", "m44": "Custom m44"}
