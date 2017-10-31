@@ -61,7 +61,8 @@ class GearSheetPlugin(Plugin):
             response = conn.getresponse().read().decode('utf-8')
             time_diff = time.time() - start_time
 
-            print(event.author)
+            print("%s requested %s" % (event.author, param))
+
             response = json.loads(response)
             if response['result'] != 'ok':
                 event.msg.reply('```item not found```')
