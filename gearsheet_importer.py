@@ -105,5 +105,30 @@ def test_plugin():
 
     print(index_response)
 
+def test_names():
+    login_params = json.dumps({'username': 'bot', 'password': 'confedrate', 'appcode': 'gearsheet'})
+    client = http.client.HTTPConnection("localhost:9000")
+
+    client.request('POST', '/login', login_params, {'Content-Type': 'application/json'})
+    login_response = client.getresponse()
+    login_response = json.loads(login_response.read().decode('utf-8'))
+
+    if login_response['result'] != 'ok':
+        print("Login to baasbox failed")
+        return
+
+    print('Login successful.')
+    session_token = login_response['data']["X-BB-SESSION"]
+
+    params = urllib.parse.urlencode({'fields': 'name'})
+    client.request('GET', '/document/indexes?%s' % params, headers={'X-BB-SESSION': session_token})
+    res = json.loads(client.getresponse().read().decode('utf-8'))
+
+    data = {i['name'] for i in res['data']}
+
+    print(data)
+
 # test_plugin()
-main()
+test_names()
+
+# main()

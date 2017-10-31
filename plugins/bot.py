@@ -22,6 +22,7 @@ class GearSheetPlugin(Plugin):
     WEAPONS = 'weapons'
     WEAPON_MODS = 'weaponmods'
     EXOTIC_GEARS = 'exoticgears'
+    names = {}
 
     def __init__(self, bot, config):
         super().__init__(bot, config)
@@ -40,6 +41,12 @@ class GearSheetPlugin(Plugin):
 
         print('Login successful.')
         self.session = login_response['data']["X-BB-SESSION"]
+
+        # get a list of all indexed names
+        params = urllib.parse.urlencode({'fields': 'name'})
+        conn.request('GET', '/document/indexes?%s' % params, headers={'X-BB-SESSION': self.session})
+        res = json.loads(conn.getresponse().read().decode('utf-8'))
+        self.names = {i['name'] for i in res['data']}
 
         conn.close()
 
@@ -67,7 +74,7 @@ class GearSheetPlugin(Plugin):
 
             response = json.loads(response)
             if response['result'] != 'ok':
-                matches = [i for i in util.aliases.keys() if fuzz.partial_ratio(param, i) > 80]
+                matches = [i for i in self.names if fuzz.partial_ratio(param, i) > 80]
 
                 if len(matches) > 0:
                     event.msg.reply('```Did you mean %s```' % ', '.join(matches))
