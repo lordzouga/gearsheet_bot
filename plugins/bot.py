@@ -81,7 +81,7 @@ class GearSheetPlugin(Plugin):
                         "any of these %s" % ', '.join(matches)
                     text = "Nothing was found for your search. Consider searching for %s instead" % \
                            match_str
-                    event.msg.reply('```%s```' % text)
+                    event.msg.reply('%s' % text)
                 else:
                     event.msg.reply('```item not found```')
 
