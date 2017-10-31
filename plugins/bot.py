@@ -74,7 +74,7 @@ class GearSheetPlugin(Plugin):
 
             response = json.loads(response)
             if response['result'] != 'ok':
-                matches = [i for i in self.names if fuzz.token_set_ratio(param, i) >= 78]
+                matches = [i for i in self.names if fuzz.partial_ratio(param, i) > 80]
 
                 if len(matches) > 0:
                     event.msg.reply('```Did you mean %s```' % ', '.join(matches))
