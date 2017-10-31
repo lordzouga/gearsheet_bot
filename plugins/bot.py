@@ -79,7 +79,7 @@ class GearSheetPlugin(Plugin):
                 if len(matches) > 0:
                     match_str = "this %s" % ', '.join(matches) if len(matches) == 1 else \
                         "any of these %s" % ', '.join(matches)
-                    text = "Nothing was found for your search. Consider searching for %s instead" % \
+                    text = "Did you mean to search for %s?" % \
                            match_str
                     event.msg.reply('%s' % text)
                 else:
