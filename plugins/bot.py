@@ -74,7 +74,7 @@ class GearSheetPlugin(Plugin):
 
             response = json.loads(response)
             if response['result'] != 'ok':
-                matches = ["**%s**".title() % i for i in self.names if fuzz.partial_ratio(param, i) > 80]
+                matches = [("**%s**" % i).title() for i in self.names if fuzz.partial_ratio(param, i) > 80]
 
                 if len(matches) > 0:
                     match_str = "this %s" % ', '.join(matches) if len(matches) == 1 else \
