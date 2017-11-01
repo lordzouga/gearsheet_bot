@@ -20,7 +20,8 @@ def main():
     print('Logging in to backend api...')
 
     # scopes = ['weaponmods']
-    scopes = ['weapontalents', 'playertalents', 'geartalents', 'gearsets', 'weapons', 'weaponmods', 'exoticgears']
+    scopes = ['weapontalents', 'playertalents', 'geartalents', 'gearsets', 'weapons', 'weaponmods', 'exoticgears',
+              'gearattributes']
 
     login_params = json.dumps({'username': 'bot', 'password': 'confedrate', 'appcode': 'gearsheet'})
     client = http.client.HTTPConnection("localhost:9000")
@@ -105,6 +106,7 @@ def test_plugin():
 
     print(index_response)
 
+
 def test_names():
     login_params = json.dumps({'username': 'bot', 'password': 'confedrate', 'appcode': 'gearsheet'})
     client = http.client.HTTPConnection("localhost:9000")
@@ -129,6 +131,6 @@ def test_names():
     print(data)
 
 # test_plugin()
-test_names()
+# test_names()
 
-# main()
+main()

@@ -22,6 +22,7 @@ class GearSheetPlugin(Plugin):
     WEAPONS = 'weapons'
     WEAPON_MODS = 'weaponmods'
     EXOTIC_GEARS = 'exoticgears'
+    GEAR_ATTRIBUTES = 'gearattributes'
     names = {}
 
     def __init__(self, bot, config):
@@ -105,6 +106,8 @@ class GearSheetPlugin(Plugin):
                     embed = self.render_weapon_mods(item)
                 elif collection_name == self.EXOTIC_GEARS:
                     embed = self.render_exotic_gear(item)
+                elif collection_name == self.GEAR_ATTRIBUTES:
+                    embed = self.render_gear_attribute(item)
 
                 event.msg.reply(embed=embed)
 
@@ -229,5 +232,17 @@ class GearSheetPlugin(Plugin):
 
         return embed
 
+    def render_gear_attribute(self, gear_attribute):
+        embed = MessageEmbed()
 
+        key_names = ["type", "name", "Minimum_Total", "Mask", "Body_Armor", "Backpack", "Gloves", "Knee_Pads", "Holster",
+                     "Maximum_Total", "Max_With_Gear_Mods"]
 
+        for key in gear_attribute.keys():
+            if key == 'name':
+                embed.title = gear_attribute[key]
+            elif key in key_names:
+                val = gear_attribute[key]
+                embed.add_field(name=key.replace("_", " "), value=val, inline=True)
+
+        return embed
