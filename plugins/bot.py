@@ -117,7 +117,6 @@ class GearSheetPlugin(Plugin):
         embed = MessageEmbed()
         # embed.set_author(name='GearSheet')
 
-        print(talent)
         embed.title = talent['name']
         embed.description = talent['description']
 
