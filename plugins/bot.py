@@ -117,6 +117,7 @@ class GearSheetPlugin(Plugin):
         embed = MessageEmbed()
         # embed.set_author(name='GearSheet')
 
+        print(talent)
         embed.title = talent['name']
         embed.description = talent['description']
 
@@ -171,6 +172,7 @@ class GearSheetPlugin(Plugin):
         return embed
 
     def render_weapon(self, weapon):
+        self.normalize(weapon)
         embed = MessageEmbed()
 
         embed.title = weapon['name']
@@ -205,6 +207,11 @@ class GearSheetPlugin(Plugin):
             embed.description = description
 
         return embed
+
+    def normalize(self, item):  # don't give empty params to bot embed
+        for i in item.keys():
+            if type(item[i]) is str and len(item[i]) == 0:
+                item[i] = '-'
 
     def render_weapon_mods(self, mod):
         embed = MessageEmbed()
