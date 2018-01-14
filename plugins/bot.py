@@ -28,6 +28,7 @@ class GearSheetPlugin(Plugin):
     def __init__(self, bot, config):
         super().__init__(bot, config)
 
+
         print('Logging in to backend api...')
         login_params = json.dumps({'username': 'bot', 'password': 'confedrate', 'appcode': 'gearsheet'})
         conn = http.client.HTTPConnection("localhost:9000")
@@ -53,8 +54,10 @@ class GearSheetPlugin(Plugin):
 
     @Plugin.command('ping')
     def command_ping(self, event):
+
         event.msg.reply('Pong!')
 
+    @Plugin.command('sheet')
     @Plugin.command('gearsheet')
     def command_talents(self, event):
         if len(event.args) > 0:
