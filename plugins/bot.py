@@ -81,9 +81,9 @@ class GearSheetPlugin(Plugin):
 
             if param == 'help':
                 help_text = '''For now I can only perform simple searches for **The Division** related items\n
-Example: to find out what *Adrenaline* talent does, use `!gearsheet adrenaline`\n
+Example: to find out what *Responsive* talent does, use `!gearsheet responsive`\n
 Popular community nicknames for items are also supported.\n
-**PRO TIP**: `!sheet adrenaline` will also work.'''
+**PRO TIP**: `!sheet responsive` will also work.'''
 
                 event.msg.reply(help_text)
                 return
