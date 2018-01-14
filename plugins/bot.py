@@ -4,6 +4,7 @@ from disco.types.message import MessageEmbed  # We need this to create the embed
 import urllib.request
 import urllib.parse
 import http.client
+import logging
 from fuzzywuzzy import fuzz
 
 
@@ -24,6 +25,7 @@ class GearSheetPlugin(Plugin):
     EXOTIC_GEARS = 'exoticgears'
     GEAR_ATTRIBUTES = 'gearattributes'
     names = {}
+    logger = None
 
     def __init__(self, bot, config):
         super().__init__(bot, config)
@@ -52,6 +54,19 @@ class GearSheetPlugin(Plugin):
 
         conn.close()
 
+        # init logging
+        self.logger = logging.getLogger('gearsheet_bot')
+        self.logger.setLevel(logging.INFO)
+
+        fh = logging.FileHandler('access.log')
+        fh.setLevel(logging.INFO)
+
+        formatter = logging.Formatter('%(asctime)s - %(name)s - %(message)s')
+        fh.setFormatter(formatter)
+
+        self.logger.addHandler(fh)
+
+
     @Plugin.command('ping')
     def command_ping(self, event):
 
@@ -66,15 +81,15 @@ class GearSheetPlugin(Plugin):
             if param in util.aliases.keys():
                 param = util.aliases[param].lower()
 
-            start_time = time.time()
+            # start_time = time.time()
             conn = http.client.HTTPConnection("localhost:9000")
             conn.request('GET', '/plugin/bot.index?%s' % (urllib.parse.urlencode({"param": param})),
                             headers={'X-BB-SESSION': self.session})
 
             response = conn.getresponse().read().decode('utf-8')
-            time_diff = time.time() - start_time
+            # time_diff = time.time() - start_time
 
-            print("%s requested %s" % (event.author, param))
+            self.logger.info("%s - %s - %s - %s" % (str(event.author).replace(" ", "_"), event.guild.name.replace(" ", "_"), event.guild.id, param))
 
             response = json.loads(response)
             if response['result'] != 'ok':
