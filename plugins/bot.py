@@ -30,7 +30,6 @@ class GearSheetPlugin(Plugin):
     def __init__(self, bot, config):
         super().__init__(bot, config)
 
-
         print('Logging in to backend api...')
         login_params = json.dumps({'username': 'bot', 'password': 'confedrate', 'appcode': 'gearsheet'})
         conn = http.client.HTTPConnection("localhost:9000")
@@ -69,14 +68,25 @@ class GearSheetPlugin(Plugin):
 
     @Plugin.command('ping')
     def command_ping(self, event):
-
         event.msg.reply('Pong!')
+
+    def log_it(self, event, param):
+        self.logger.info("%s - %s - %s - %s" % (str(event.author).replace(" ", "_"), event.guild.name.replace(" ", "_"), event.guild.id, param))
 
     @Plugin.command('sheet')
     @Plugin.command('gearsheet')
     def command_talents(self, event):
         if len(event.args) > 0:
             param = ' '.join(event.args).lower()
+
+            if param == 'help':
+                help_text = '''For now I can only perform simple searches for **The Division** related items\n
+Example: to find out what *Adrenaline* talent does, use `!gearsheet adrenaline`\n
+Popular community nicknames for items are also supported.\n
+**PRO TIP**: `!sheet adrenaline` will also work.'''
+
+                event.msg.reply(help_text)
+                return
 
             if param in util.aliases.keys():
                 param = util.aliases[param].lower()
@@ -89,7 +99,7 @@ class GearSheetPlugin(Plugin):
             response = conn.getresponse().read().decode('utf-8')
             # time_diff = time.time() - start_time
 
-            self.logger.info("%s - %s - %s - %s" % (str(event.author).replace(" ", "_"), event.guild.name.replace(" ", "_"), event.guild.id, param))
+            self.log_it(event, param)
 
             response = json.loads(response)
             if response['result'] != 'ok':
