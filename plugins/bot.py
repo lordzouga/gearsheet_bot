@@ -85,7 +85,7 @@ Example: to find out what *Responsive* talent does, use `!gearsheet responsive`\
 Popular community nicknames for items are also supported.\n
 **PRO TIP**: `!sheet responsive` will also work.
 
-My reddit thread: https://goo.gl/638vpi
+My reddit thread: https://goo.gl/638vpi.
 
 **Credit** to @Pfftman#6620 | /u/pfftman | PSN: pfftman'''
 
