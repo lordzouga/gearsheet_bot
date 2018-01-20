@@ -65,6 +65,7 @@ def pull_data_from_scope(scope, session):
     client = http.client.HTTPConnection("localhost:9000")
     for item in data:
         #  print(item)
+        item['name'] = item['name'].lower().strip()
         item_json = json.dumps(item)
         client.request('POST', '/document/%s' % (scope), item_json,
                        {'Content-Type': 'application/json', 'X-BB-SESSION': session})

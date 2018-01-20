@@ -24,4 +24,5 @@ aliases = {"lvoa": "Lvoa-C", "lwm4": "Lightweight M4",
            "pred": "Predators mark", "pred mark": "Predators Mark",
            "sh": "Skill Haste", "dte": "Damage vs Elites", "ead": "Enemy Armor Damage",
            "damage to elites": "Damage vs Elites", "chd": "crit damage", "chc": "crit chance",
-           "critical hit damage": "crit damage", "critical hit chance": "crit chance"}
+           "critical hit damage": "crit damage", "critical hit chance": "crit chance",
+           "self-preserved": "selfpreserved"}

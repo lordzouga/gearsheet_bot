@@ -83,8 +83,13 @@ class GearSheetPlugin(Plugin):
                 help_text = '''For now I can only perform simple searches for **The Division** related items\n
 Example: to find out what *Responsive* talent does, use `!gearsheet responsive`\n
 Popular community nicknames for items are also supported.\n
-**PRO TIP**: `!sheet responsive` will also work.'''
+**PRO TIP**: `!sheet responsive` will also work.
 
+My reddit thread: https://goo.gl/638vpi
+
+**Credit** to @Pfftman#6620 | /u/pfftman | PSN: pfftman'''
+
+                self.log_it(event, param)
                 event.msg.reply(help_text)
                 return
 
@@ -99,7 +104,8 @@ Popular community nicknames for items are also supported.\n
             response = conn.getresponse().read().decode('utf-8')
             # time_diff = time.time() - start_time
 
-            self.log_it(event, param)
+            if "Pfftman" not in event.author:
+                self.log_it(event, param)
 
             response = json.loads(response)
             if response['result'] != 'ok':
