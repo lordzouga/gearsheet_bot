@@ -104,7 +104,7 @@ My reddit thread: https://goo.gl/638vpi
             response = conn.getresponse().read().decode('utf-8')
             # time_diff = time.time() - start_time
 
-            if "Pfftman" not in event.author:
+            if "Pfftman" not in str(event.author):
                 self.log_it(event, param)
 
             response = json.loads(response)
