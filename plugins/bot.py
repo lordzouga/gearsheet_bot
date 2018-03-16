@@ -11,6 +11,29 @@ import json
 import time
 
 import util
+import requests
+
+BACKEND_HOST = "http://localhost:9000"
+SESSION_HEADER = 'X-BB-SESSION'
+VENDOR_WEAPONS = 'weapons'
+VENDOR_WEAPON_MODS = 'weapon-mods'
+VENDOR_GEAR_MODS = 'gear-mods'
+VENDOR_RECOMMENDATIONS = 'recommendations'
+VENDOR_GEAR = 'gear'
+
+def get_collection_name(name):
+    return "vendors-%s" % name
+
+def remove_duplicates(data):
+    temp = set()
+    stripped = []
+
+    for i in data:
+        if i['id'] not in temp:
+            temp.add(i['id'])
+            stripped.append(i)
+    
+    return stripped
 
 class GearSheetPlugin(Plugin):
     session = ""
@@ -23,6 +46,7 @@ class GearSheetPlugin(Plugin):
     WEAPON_MODS = 'weaponmods'
     EXOTIC_GEARS = 'exoticgears'
     GEAR_ATTRIBUTES = 'gearattributes'
+
     names = {}
     logger = None
 
@@ -79,7 +103,7 @@ class GearSheetPlugin(Plugin):
             param = ' '.join(event.args).lower()
 
             if param == 'help':
-                help_text = '''For now I can only perform simple searches for **The Division** related items\n
+                help_text = '''I can only perform simple searches for **The Division** related items\n
 Example: to find out what *Responsive* talent does, use `!gearsheet responsive`\n
 Popular community nicknames for items are also supported.\n
 **PRO TIP**: `!sheet responsive` will also work.
@@ -101,6 +125,7 @@ My reddit thread: https://goo.gl/638vpi.
                             headers={'X-BB-SESSION': self.session})
 
             response = conn.getresponse().read().decode('utf-8')
+            conn.close()
             # time_diff = time.time() - start_time
 
             if "Pfftman" not in str(event.author):
@@ -144,7 +169,66 @@ My reddit thread: https://goo.gl/638vpi.
 
                 event.msg.reply(embed=embed)
 
-            conn.close()
+    @Plugin.command('vendors')
+    def command_vendors(self, event):
+        if len(event.args) > 0:
+            param = ' '.join(event.args).lower()
+
+            header = {SESSION_HEADER: self.session}
+            response = requests.get(BACKEND_HOST + '/plugin/vendors.index', params={"param": param}, headers=header)
+
+            # print(response.json())
+
+            if response.json()['result'] != 'ok':
+                event.msg.reply('```item not found```')
+                return
+            
+            data = remove_duplicates(response.json()["data"])
+            embed = None
+
+            if len(data) > 1:
+                embed = self.render_multiple_items(data)
+            else:
+                for item in data:
+                    collection = item['@class']
+
+                    if collection == "vendors-%s" % VENDOR_WEAPONS:
+                        embed = self.render_vendor_weapon(item)
+            
+            if embed != None:
+                event.msg.reply(embed=embed)
+    
+    def render_multiple_items(self, items):
+        embed = MessageEmbed()
+
+        embed.description = "found in %s items" % len(items)
+
+        for item in items:
+            collection = item["@class"]
+
+            if collection == get_collection_name(VENDOR_WEAPONS):
+                talents = " **-** ".join([ i for i in [item['talent1'], item['talent2'], item['talent3']] if i.strip() != "-"])
+                body = '''`%s` | **%s** | %s''' % (item["vendor"], item['price'], talents.strip())
+
+                embed.add_field(name=item["name"], value=body)
+            else: return None
+        
+        return embed
+
+    def render_vendor_weapon(self, weapon):
+        embed = MessageEmbed()
+
+        embed.title = weapon['name']
+        embed.description = weapon['vendor']
+        # embed.add_field(name='Vendor', value=weapon['vendor'], inline=True)
+        embed.add_field(name='Price', value=weapon['price'], inline=True)
+        embed.add_field(name="Damage", value=weapon['dmg'], inline=True)
+        embed.add_field(name='Bonus', value=weapon['bonus'], inline=True)
+        
+        talents = " **-** ".join([ i for i in [weapon['talent1'], weapon['talent2'], weapon['talent3']] if i.strip() != "-"])
+        embed.add_field(name='Talents', value=talents)
+
+        return embed
 
     def render_weapon_talent(self, talent):
         embed = MessageEmbed()
