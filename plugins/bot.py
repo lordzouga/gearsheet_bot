@@ -177,8 +177,26 @@ My reddit thread: https://goo.gl/638vpi.
         if len(event.args) > 0:
             param = ' '.join(event.args).lower()
 
+            splitted = param.strip().split(" with ")
+            param_obj = None
+
+            if len(splitted) == 1: # this block takes care of args without 'with'
+                param_obj = {
+                    "param": splitted[0],
+                    "has_arg": False
+                }
+            elif len(splitted) >= 2:
+                param_obj = {
+                    "param": splitted[0],
+                    "has_arg": True,
+                    "arg": splitted[1] # take only one argument
+                }
+            else:
+                event.msg.reply('```You shouldn\'t be able to get here. Yet.. ```')
+                return
+
             header = {SESSION_HEADER: self.session}
-            response = requests.get(BACKEND_HOST + '/plugin/vendors.index', params={"param": param}, headers=header)
+            response = requests.get(BACKEND_HOST + '/plugin/vendors.index', params=param_obj, headers=header)
 
             if response.json()['result'] != 'ok':
                 event.msg.reply('```item not found```')
