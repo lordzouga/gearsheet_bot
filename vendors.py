@@ -46,7 +46,7 @@ def get_attributes_from_gear(gear):
             split_item = k.split("<br/>")
             for attr in split_item:
                 i = attr.find(" ") + 1 # find the index of the first space
-                attrs.append(attr[i:].strip())
+                attrs.append(attr[i:].strip().lower())
 
     return attrs
     
@@ -86,21 +86,38 @@ def main():
 
                         if result_is_ok(item_add_resp):
                             item_id = item_add_resp.json()["data"]['id']
-                            index_data = {"name": item['name'].lower(), "collection": collection_name, "item_id": item_id}
-                            requests.post(BACKEND_HOST + VENDORS_INDEX_PATH, json=index_data, headers=header)
-
+                            
                             if category == 'weapons':
-                                talents = [item['talent1'].strip(), item['talent2'].strip(), item['talent3'].strip()]
+                                talents = [item['talent1'].strip().lower(), item['talent2'].strip().lower(), item['talent3'].strip().lower()]
                                 
+                                index_data = {"name": item['name'].lower(), 
+                                    "collection": collection_name, 
+                                    "item_id": item_id,
+                                    "attributes": talents }
+
+                                requests.post(BACKEND_HOST + VENDORS_INDEX_PATH, json=index_data, headers=header)
+
+                                # delete the attributes key because talents shouldn't have attributes
+                                del index_data["attributes"]
+
                                 for talent in talents:
                                     if talent != '-':
                                         index_data['name'] = talent.lower()
                                         requests.post(BACKEND_HOST + VENDORS_INDEX_PATH, json=index_data, headers=header)
-                                
                                 # print("added talent for weapon..")
                             elif category == 'gear':
                                 attrs = get_attributes_from_gear(item)
-                                
+
+                                index_data = {"name": item['name'].lower(),
+                                    "collection": collection_name, 
+                                    "item_id": item_id,
+                                    "attributes": attrs }
+
+                                requests.post(BACKEND_HOST + VENDORS_INDEX_PATH, json=index_data, headers=header)
+
+                                # delete the attributes item because attr shouldn't have attributes
+                                del index_data["attributes"]
+
                                 for attr in attrs:
                                     index_data['name'] = attr.lower()
                                     requests.post(BACKEND_HOST + VENDORS_INDEX_PATH, json=index_data, headers=header)

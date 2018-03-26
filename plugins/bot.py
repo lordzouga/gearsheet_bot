@@ -96,6 +96,8 @@ class GearSheetPlugin(Plugin):
     def log_it(self, event, param):
         self.logger.info("%s - %s - %s - %s" % (str(event.author).replace(" ", "_"), event.guild.name.replace(" ", "_"), event.guild.id, param))
 
+    @Plugin.command('g')
+    @Plugin.command('s')
     @Plugin.command('sheet')
     @Plugin.command('gearsheet')
     def command_talents(self, event):
@@ -169,6 +171,7 @@ My reddit thread: https://goo.gl/638vpi.
 
                 event.msg.reply(embed=embed)
 
+    @Plugin.command('v')
     @Plugin.command('vendors')
     def command_vendors(self, event):
         if len(event.args) > 0:
@@ -176,8 +179,6 @@ My reddit thread: https://goo.gl/638vpi.
 
             header = {SESSION_HEADER: self.session}
             response = requests.get(BACKEND_HOST + '/plugin/vendors.index', params={"param": param}, headers=header)
-
-            # print(response.json())
 
             if response.json()['result'] != 'ok':
                 event.msg.reply('```item not found```')
@@ -194,13 +195,14 @@ My reddit thread: https://goo.gl/638vpi.
 
                     if collection == "vendors-%s" % VENDOR_WEAPONS:
                         embed = self.render_vendor_weapon(item)
+                    elif collection == get_collection_name(VENDOR_GEAR):
+                        embed = self.render_vendor_gear(item)
             
             if embed != None:
                 event.msg.reply(embed=embed)
     
     def render_multiple_items(self, items):
         embed = MessageEmbed()
-
         embed.description = "found in %s items" % len(items)
 
         for item in items:
@@ -208,9 +210,19 @@ My reddit thread: https://goo.gl/638vpi.
 
             if collection == get_collection_name(VENDOR_WEAPONS):
                 talents = " **-** ".join([ i for i in [item['talent1'], item['talent2'], item['talent3']] if i.strip() != "-"])
-                body = '''`%s` | **%s** | %s''' % (item["vendor"], item['price'], talents.strip())
+                body = '''`%s`  |  **%s** DMG  |  %s''' % (item["vendor"], item['dmg'], talents.strip())
 
                 embed.add_field(name=item["name"], value=body)
+            elif collection == get_collection_name(VENDOR_GEAR):
+                major_attrs = item["major"].strip().strip("-").split("<br/>")
+                minor_attrs = item["minor"].strip().strip("-").split("<br/>")
+
+                all_attrs = "  **|**  ".join([i for i in major_attrs + minor_attrs if i != ""])
+                
+                body = "`%s`  |  %s" % (item["vendor"], all_attrs)
+
+                embed.add_field(name=item["name"], value=body)
+            
             else: return None
         
         return embed
@@ -230,6 +242,34 @@ My reddit thread: https://goo.gl/638vpi.
 
         return embed
 
+    def render_vendor_gear(self, gear):
+        embed = MessageEmbed()
+
+        embed.title = gear['name']
+        embed.description = gear['vendor']
+
+        embed.add_field(name='Price', value=gear['price'], inline=True)
+        embed.add_field(name='Armor', value=gear['armor'], inline=True)
+        embed.add_field(name="Gearscore", value=gear['score'], inline=True)
+
+        if (gear['fire'].strip().strip('-')):
+            embed.add_field(name='Firearms', value=gear['fire'], inline=True)
+        if (gear['stam'].strip().strip('-')):
+            embed.add_field(name='Stamina', value=gear['stam'], inline=True)
+        if (gear['elec'].strip().strip('-')):
+            embed.add_field(name='Electronics', value=gear['elec'], inline=True)
+        
+        major_attr = "  **|**  ".join(gear["major"].strip().strip("-").split("<br/>"))
+        minor_attr = "  **|**  ".join(gear["minor"].strip().strip("-").split("<br/>"))
+
+        if major_attr:
+            embed.add_field(name='Major Attribute(s)', value=major_attr, inline=True)
+        
+        if minor_attr:
+            embed.add_field(name='Minor Attribute(s)', value=minor_attr, inline=True)
+        
+        return embed
+    
     def render_weapon_talent(self, talent):
         embed = MessageEmbed()
         # embed.set_author(name='GearSheet')
