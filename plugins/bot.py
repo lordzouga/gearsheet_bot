@@ -180,6 +180,10 @@ My reddit thread: https://goo.gl/638vpi.
             splitted = param.strip().split(" with ")
             param_obj = None
 
+            for i, item in enumerate(splitted): # check if there is already a nickname
+                if item in util.aliases.keys():
+                    splitted[i] = util.aliases[item].lower()
+
             if len(splitted) == 1: # this block takes care of args without 'with'
                 param_obj = {
                     "param": splitted[0],
