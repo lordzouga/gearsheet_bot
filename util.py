@@ -29,5 +29,6 @@ aliases = {"lvoa": "Lvoa-C", "lwm4": "Lightweight M4",
 
 
 vendor_aliases = {
-    "chd": "critical hit damage", "chc": "critical hit chance", "vest": "chest"
+    "chd": "critical hit damage", "chc": "critical hit chance", "vest": "chest",
+    "pred": "Predator's mark"
 }

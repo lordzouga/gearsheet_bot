@@ -122,7 +122,7 @@ def main():
 
                                 type = [t for t in pieces if t in gear_name] # must have a value
                                 type = type[0].strip() if len(type) > 0 else "" # for safety in case someone fucks up
-                                gearset = gear_name.rstrip(type).strip()
+                                gearset = gear_name.replace(type, "").strip()
                                 
                                 if type:
                                     print("indexing a %s..." % type)
