@@ -26,3 +26,8 @@ aliases = {"lvoa": "Lvoa-C", "lwm4": "Lightweight M4",
            "damage to elites": "Damage vs Elites", "chd": "crit damage", "chc": "crit chance",
            "critical hit damage": "crit damage", "critical hit chance": "crit chance",
            "self-preserved": "selfpreserved"}
+
+
+vendor_aliases = {
+    "chd": "critical hit damage", "chc": "critical hit chance", "vest": "chest"
+}

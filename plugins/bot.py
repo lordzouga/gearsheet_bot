@@ -181,7 +181,10 @@ My reddit thread: https://goo.gl/638vpi.
             param_obj = None
 
             for i, item in enumerate(splitted): # check if there is already a nickname
-                if item in util.aliases.keys():
+                # start with the vendor aliases and fallback to the gearsheet aliases
+                if item in util.vendor_aliases.keys():
+                    splitted[i] = util.vendor_aliases[item].lower()
+                elif item in util.aliases.keys():
                     splitted[i] = util.aliases[item].lower()
 
             if len(splitted) == 1: # this block takes care of args without 'with'
@@ -207,6 +210,7 @@ My reddit thread: https://goo.gl/638vpi.
                 return
             
             data = remove_duplicates(response.json()["data"])
+            data = sorted(data, key=lambda item: item['name'])
             embed = None
 
             if len(data) > 1:

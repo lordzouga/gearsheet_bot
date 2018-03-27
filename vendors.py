@@ -87,6 +87,7 @@ def main():
                         if result_is_ok(item_add_resp):
                             item_id = item_add_resp.json()["data"]['id']
                             
+                            ### ADD WEAPONS ###
                             if category == 'weapons':
                                 talents = [item['talent1'].strip().lower(), item['talent2'].strip().lower(), item['talent3'].strip().lower()]
                                 
@@ -105,15 +106,40 @@ def main():
                                         index_data['name'] = talent.lower()
                                         requests.post(BACKEND_HOST + VENDORS_INDEX_PATH, json=index_data, headers=header)
                                 # print("added talent for weapon..")
+
+                            ### ADD GEAR ###
                             elif category == 'gear':
                                 attrs = get_attributes_from_gear(item)
+                                pieces = ["chest", "gloves", "knee pads", "holster", "mask", "backpack"]
+                                gear_name = item['name'].lower()
 
-                                index_data = {"name": item['name'].lower(),
+                                index_data = {"name": gear_name,
                                     "collection": collection_name, 
                                     "item_id": item_id,
                                     "attributes": attrs }
 
                                 requests.post(BACKEND_HOST + VENDORS_INDEX_PATH, json=index_data, headers=header)
+
+                                type = [t for t in pieces if t in gear_name] # must have a value
+                                type = type[0].strip() if len(type) > 0 else "" # for safety in case someone fucks up
+                                gearset = gear_name.rstrip(type).strip()
+                                
+                                if type:
+                                    print("indexing a %s..." % type)
+                                    index_data = {"name": type,
+                                        "collection": collection_name, 
+                                        "item_id": item_id,
+                                        "attributes": attrs }
+
+                                    requests.post(BACKEND_HOST + VENDORS_INDEX_PATH, json=index_data, headers=header)
+
+                                    print("indexing a %s..." % gearset)
+                                    index_data = {"name": gearset,
+                                        "collection": collection_name, 
+                                        "item_id": item_id,
+                                        "attributes": attrs }
+
+                                    requests.post(BACKEND_HOST + VENDORS_INDEX_PATH, json=index_data, headers=header)
 
                                 # delete the attributes item because attr shouldn't have attributes
                                 del index_data["attributes"]
