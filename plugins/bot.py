@@ -184,8 +184,8 @@ My reddit thread: https://goo.gl/638vpi.
                 # start with the vendor aliases and fallback to the gearsheet aliases
                 if item in util.vendor_aliases.keys():
                     splitted[i] = util.vendor_aliases[item].lower()
-                elif item in util.aliases.keys():
-                    splitted[i] = util.aliases[item].lower()
+                # elif item in util.aliases.keys():
+                #    splitted[i] = util.aliases[item].lower()
 
             if len(splitted) == 1: # this block takes care of args without 'with'
                 param_obj = {

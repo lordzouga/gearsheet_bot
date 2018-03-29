@@ -49,7 +49,15 @@ def get_attributes_from_gear(gear):
                 attrs.append(attr[i:].strip().lower())
 
     return attrs
+
+def convert_weapons_to_dict(weapons):
+    temp = dict()
+
+    for weapon in weapons:
+        temp[weapon["name"].lower()] = [weapon["variant"].lower(), weapon["type"].lower()]
     
+    return temp
+
 def main():
     session = login_to_backend()
     if not session:
@@ -62,7 +70,7 @@ def main():
     if result_is_ok(res):
         print("index reset is successful")
     else: 
-        print("index reset unsuccessful")
+        print("index reset unsuccessful", res)
         return
     
     for category in CATEGORIES:
@@ -75,6 +83,11 @@ def main():
             collection_name = 'vendors-' + category
             scope_to_reset = [collection_name]
             reset_resp = requests.post(BACKEND_HOST + PLUGIN_PATH, json=scope_to_reset, headers=header)
+            weapons_param = { 
+                "fields": "name,variant,type"
+            }
+            weapons_data = requests.get(BACKEND_HOST + '/document/weapons', params=weapons_param, headers=header).json()
+            weapons_data = convert_weapons_to_dict(weapons_data["data"])
 
             if result_is_ok(reset_resp):
                 print("reset of %s table successful" % category)
@@ -90,14 +103,26 @@ def main():
                             ### ADD WEAPONS ###
                             if category == 'weapons':
                                 talents = [item['talent1'].strip().lower(), item['talent2'].strip().lower(), item['talent3'].strip().lower()]
-                                
-                                index_data = {"name": item['name'].lower(), 
+                                weapon_name = item['name'].lower()
+
+                                index_data = {
+                                    "name": weapon_name, 
                                     "collection": collection_name, 
                                     "item_id": item_id,
-                                    "attributes": talents }
+                                    "attributes": talents
+                                }
 
                                 requests.post(BACKEND_HOST + VENDORS_INDEX_PATH, json=index_data, headers=header)
+                                
+                                if weapon_name in weapons_data.keys():
+                                    index_data["name"] = weapons_data[weapon_name][0] # weapon variant
+                                    requests.post(BACKEND_HOST + VENDORS_INDEX_PATH, json=index_data, headers=header)
 
+                                    index_data["name"] = weapons_data[weapon_name][1] # weapon type
+                                    requests.post(BACKEND_HOST + VENDORS_INDEX_PATH, json=index_data, headers=header)
+                                else:
+                                    print(weapon_name + " not found")
+                                
                                 # delete the attributes key because talents shouldn't have attributes
                                 del index_data["attributes"]
 
@@ -126,18 +151,12 @@ def main():
                                 
                                 if type:
                                     print("indexing a %s..." % type)
-                                    index_data = {"name": type,
-                                        "collection": collection_name, 
-                                        "item_id": item_id,
-                                        "attributes": attrs }
+                                    index_data["name"] = type
 
                                     requests.post(BACKEND_HOST + VENDORS_INDEX_PATH, json=index_data, headers=header)
 
                                     print("indexing a %s..." % gearset)
-                                    index_data = {"name": gearset,
-                                        "collection": collection_name, 
-                                        "item_id": item_id,
-                                        "attributes": attrs }
+                                    index_data['name'] = gearset
 
                                     requests.post(BACKEND_HOST + VENDORS_INDEX_PATH, json=index_data, headers=header)
 
@@ -147,8 +166,10 @@ def main():
                                 for attr in attrs:
                                     index_data['name'] = attr.lower()
                                     requests.post(BACKEND_HOST + VENDORS_INDEX_PATH, json=index_data, headers=header)
-                                
+                        
                                 # print("added attributes for gear")
+                        elif category == "gear-mods":
+                            pass
                         else:
                             print("adding item from %s category failed" % category)
                 
