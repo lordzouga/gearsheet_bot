@@ -39,16 +39,20 @@ def get_attributes_from_gear(gear):
     major = gear['major']
     minor = gear['minor']
 
+    return parse_attributes([major, minor])
+
+def parse_attributes(raw_attr):
     attrs = []
 
-    for k in [major, minor]:
+    for k in raw_attr:
         if k.strip() != "-":
             split_item = k.split("<br/>")
             for attr in split_item:
                 i = attr.find(" ") + 1 # find the index of the first space
                 attrs.append(attr[i:].strip().lower())
-
+    
     return attrs
+
 
 def convert_weapons_to_dict(weapons):
     temp = dict()
@@ -150,12 +154,12 @@ def main():
                                 gearset = gear_name.replace(type, "").strip()
                                 
                                 if type:
-                                    print("indexing a %s..." % type)
+                                    # print("indexing a %s..." % type)
                                     index_data["name"] = type
 
                                     requests.post(BACKEND_HOST + VENDORS_INDEX_PATH, json=index_data, headers=header)
 
-                                    print("indexing a %s..." % gearset)
+                                    # print("indexing a %s..." % gearset)
                                     index_data['name'] = gearset
 
                                     requests.post(BACKEND_HOST + VENDORS_INDEX_PATH, json=index_data, headers=header)
@@ -168,8 +172,55 @@ def main():
                                     requests.post(BACKEND_HOST + VENDORS_INDEX_PATH, json=index_data, headers=header)
                         
                                 # print("added attributes for gear")
-                        elif category == "gear-mods":
-                            pass
+                            elif category == "gear-mods":
+                                mod_name = item["name"].lower()
+
+                                attr = item["attribute"]
+                                space = attr.find(" ") + 1 # find the first index of whitespace
+                                attrs = [attr[space:].strip().lower()]
+
+                                index_data = {
+                                    "name": mod_name,
+                                    "collection": collection_name,
+                                    "item_id": item_id,
+                                    "attributes": attrs
+                                }
+
+                                requests.post(BACKEND_HOST + VENDORS_INDEX_PATH, json=index_data, headers=header)
+
+                                index_data["name"] = "mods"
+                                requests.post(BACKEND_HOST + VENDORS_INDEX_PATH, json=index_data, headers=header)
+
+                                if item["type"] == "purple-mod":
+                                    index_data["name"] = "purple mod"
+                                    requests.post(BACKEND_HOST + VENDORS_INDEX_PATH, json=index_data, headers=header)
+                                
+                                del index_data["attributes"]
+
+                                index_data["name"] = attrs[0]
+                                requests.post(BACKEND_HOST + VENDORS_INDEX_PATH, json=index_data, headers=header)
+                                
+                            elif category == "weapon-mods":
+                                mod_name = item["name"].lower()
+                                attrs = parse_attributes([item["attributes"]])
+
+                                index_data = {
+                                    "name": mod_name,
+                                    "collection": collection_name,
+                                    "item_id": item_id,
+                                    "attributes": attrs
+                                }
+
+                                requests.post(BACKEND_HOST + VENDORS_INDEX_PATH, json=index_data, headers=header)
+
+                                index_data["name"] = "weapon mod"
+                                requests.post(BACKEND_HOST + VENDORS_INDEX_PATH, json=index_data, headers=header)
+
+                                del index_data["attributes"]
+
+                                for attr in attrs:
+                                    index_data["name"] = attr
+                                    requests.post(BACKEND_HOST + VENDORS_INDEX_PATH, json=index_data, headers=header)
                         else:
                             print("adding item from %s category failed" % category)
                 

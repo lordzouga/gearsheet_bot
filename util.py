@@ -53,5 +53,4 @@ vendor_aliases = {
     "military ak": "military AK-47", "black market ak": "Black Market AK-74",
     "pred mark": "Predator's Mark",
     "sh": "Skill Haste", "ead": "Enemy Armor Damage", 
-    "self-preserved": "selfpreserved"
 }
