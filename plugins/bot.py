@@ -184,9 +184,7 @@ My reddit thread: https://goo.gl/638vpi.
                 # start with the vendor aliases and fallback to the gearsheet aliases
                 if item in util.vendor_aliases.keys():
                     splitted[i] = util.vendor_aliases[item].lower()
-                # elif item in util.aliases.keys():
-                #    splitted[i] = util.aliases[item].lower()
-
+                
             if len(splitted) == 1: # this block takes care of args without 'with'
                 param_obj = {
                     "param": splitted[0],
@@ -223,6 +221,10 @@ My reddit thread: https://goo.gl/638vpi.
                         embed = self.render_vendor_weapon(item)
                     elif collection == get_collection_name(VENDOR_GEAR):
                         embed = self.render_vendor_gear(item)
+                    elif collection == get_collection_name(VENDOR_GEAR_MODS):
+                        embed = self.render_vendor_gear_mod(item)
+                    elif collection == get_collection_name(VENDOR_WEAPON_MODS):
+                        embed = self.render_vendor_weapon_mod(item)
             
             if embed != None:
                 event.msg.reply(embed=embed)
@@ -248,7 +250,18 @@ My reddit thread: https://goo.gl/638vpi.
                 body = "`%s`  |  %s" % (item["vendor"], all_attrs)
 
                 embed.add_field(name=item["name"], value=body)
-            
+            elif collection == get_collection_name(VENDOR_GEAR_MODS):
+                attr = item["attribute"]
+
+                body = "`%s` | %s | %s" % (item["vendor"], item['stat'], attr)
+                embed.add_field(name=item['name'], value=body)
+            elif collection == get_collection_name(VENDOR_WEAPON_MODS):
+                attrs = item['attributes'].split("<br/>")
+
+                attrs_str = " **|** ".join([i for i in attrs[:3]])
+
+                body = "`%s` | %s " % (item["vendor"], attrs_str)
+                embed.add_field(name=item["name"], value=body)
             else: return None
         
         return embed
@@ -265,6 +278,31 @@ My reddit thread: https://goo.gl/638vpi.
         
         talents = " **-** ".join([ i for i in [weapon['talent1'], weapon['talent2'], weapon['talent3']] if i.strip() != "-"])
         embed.add_field(name='Talents', value=talents)
+
+        return embed
+    
+    def render_vendor_gear_mod(self, gearmod):
+        embed = MessageEmbed()
+
+        embed.title = gearmod['name']
+        embed.description = gearmod['vendor']
+
+        embed.add_field(name='Price', value=gearmod['price'], inline=True)
+        embed.add_field(name='Stat', value=gearmod['stat'], inline=True)
+        embed.add_field(name='Attribute', value=gearmod['attribute'])
+
+        return embed
+    
+    def render_vendor_weapon_mod(self, weaponmod):
+        embed = MessageEmbed()
+
+        embed.title = weaponmod['name']
+        embed.description = weaponmod['vendor']
+
+        embed.add_field(name='Price', value=weaponmod['price'], inline=True)
+        # embed.add_field(name='Stat', value=weaponmod[''], inline=True)
+        attr = " **-** ".join(weaponmod["attributes"].split('<br/>'))
+        embed.add_field(name='Attribute', value=attr)
 
         return embed
 

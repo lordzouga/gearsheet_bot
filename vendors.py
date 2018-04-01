@@ -188,7 +188,7 @@ def main():
 
                                 requests.post(BACKEND_HOST + VENDORS_INDEX_PATH, json=index_data, headers=header)
 
-                                index_data["name"] = "mods"
+                                index_data["name"] = "mod"
                                 requests.post(BACKEND_HOST + VENDORS_INDEX_PATH, json=index_data, headers=header)
 
                                 if item["type"] == "purple-mod":
