@@ -32,7 +32,7 @@ vendor_aliases = {
     "chd": "critical hit damage", "chc": "critical hit chance", "vest": "chest",
     "pred": "Predator's mark", "sp": "Skill Power", "ar damage": "Assault Rifle Damage",
     "dte": "damage to elites", "sh": "Skill haste", "stamina mod": "stamina mods", 
-    "firearms mod": "firearms mods", "electronics mod": "electronics mods"
+    "firearms mod": "firearms mods", "electronics mod": "electronics mods",
     "lvoa": "Lvoa-C", "lwm4": "Lightweight M4",
     "rpk": "rpk-74",
     "fm": "Final Measure", "ls": "Lone Star",
