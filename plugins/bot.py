@@ -48,6 +48,7 @@ class GearSheetPlugin(Plugin):
     GEAR_ATTRIBUTES = 'gearattributes'
 
     names = {}
+    vendor_names = {}
     logger = None
 
     def __init__(self, bot, config):
@@ -75,6 +76,12 @@ class GearSheetPlugin(Plugin):
         self.names = {i['name'] for i in res['data']}
 
         conn.close()
+
+        vendors_param = {
+                "fields": "name"
+            }
+        response = requests.get(BACKEND_HOST + '/document/vendors-index', params=vendors_param, headers={SESSION_HEADER: self.session})
+        self.vendor_names = {i['name'] for i in response.json()['data']}
 
         # init logging
         self.logger = logging.getLogger('gearsheet_bot')
@@ -178,19 +185,24 @@ My reddit thread: https://goo.gl/638vpi.
             param = ' '.join(event.args).lower()
 
             splitted = param.strip().split(" with ")
-            param_obj = None
+            
 
+            arg = None
+            param_obj = None
+            
             for i, item in enumerate(splitted): # check if there is already a nickname
                 # start with the vendor aliases and fallback to the gearsheet aliases
                 if item in util.vendor_aliases.keys():
                     splitted[i] = util.vendor_aliases[item].lower()
-                
+            
+            query = splitted[0]    
             if len(splitted) == 1: # this block takes care of args without 'with'
                 param_obj = {
                     "param": splitted[0],
                     "has_arg": False
                 }
             elif len(splitted) >= 2:
+                arg = splitted[1]
                 param_obj = {
                     "param": splitted[0],
                     "has_arg": True,
@@ -203,8 +215,32 @@ My reddit thread: https://goo.gl/638vpi.
             header = {SESSION_HEADER: self.session}
             response = requests.get(BACKEND_HOST + '/plugin/vendors.index', params=param_obj, headers=header)
 
-            if response.json()['result'] != 'ok':
-                event.msg.reply('```item not found```')
+            if response.json()['result'] != 'ok': # item not found in vendors list
+                # try to determine if it was a bad input from user or an item that doesn't exist
+                
+                pieces = ["vest", "backpack", "mask", "gloves", "knee pads", "holster"]
+                temp = [i for i in pieces if (" " + i) in query]
+                if len(temp) > 0:
+                    gear_piece = query.strip(" " + temp[0])
+                    if gear_piece in self.names:
+                        event.msg.reply('Sorry, no gearset item like that this week')
+                        return
+                    else:
+                        event.msg.reply('Are you sure this gearset exists?')
+                        return
+                elif query in ["performance mod", "stamina mod", "electronics mod", "weapon mod"]:
+                    event.msg.reply('Sorry, no mod like that this week')
+                    return
+                elif query in self.names or query in self.vendor_names:
+                    event.msg.reply("Sorry, nothing like that this week")
+                    return
+                else:
+                    event.msg.reply("Are you sure this item exists?")
+                    return
+
+                ''' is_gear_piece = len() > 0
+
+                event.msg.reply('```item not found```')'''
                 return
             
             data = remove_duplicates(response.json()["data"])
