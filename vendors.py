@@ -54,11 +54,13 @@ def parse_attributes(raw_attr):
     return attrs
 
 
-def convert_weapons_to_dict(weapons):
+def convert_to_dict(items):
     temp = dict()
 
-    for weapon in weapons:
-        temp[weapon["name"].lower()] = [weapon["variant"].lower(), weapon["type"].lower()]
+    # keys = [k for k in [i for i in items if i != "name"]]
+
+    for item in items:
+        temp[item["name"].lower()] = [item[w].lower() for w in item.keys() if w != "name"and w != "@version" and w != "@rid"]
     
     return temp
 
@@ -87,11 +89,19 @@ def main():
             collection_name = 'vendors-' + category
             scope_to_reset = [collection_name]
             reset_resp = requests.post(BACKEND_HOST + PLUGIN_PATH, json=scope_to_reset, headers=header)
+            
             weapons_param = { 
                 "fields": "name,variant,type"
             }
             weapons_data = requests.get(BACKEND_HOST + '/document/weapons', params=weapons_param, headers=header).json()
-            weapons_data = convert_weapons_to_dict(weapons_data["data"])
+            weapons_data = convert_to_dict(weapons_data["data"])
+
+            weapon_mods_param = {
+                "fields": "name,category,Mod_Type"
+            }
+
+            weapon_mods_data = requests.get(BACKEND_HOST + '/document/weaponmods', params=weapons_param, headers=header).json()
+            weapon_mods_dats = convert_to_dict(weapon_mods_data['data'])
 
             if result_is_ok(reset_resp):
                 print("reset of %s table successful" % category)
@@ -212,6 +222,13 @@ def main():
                                 }
 
                                 requests.post(BACKEND_HOST + VENDORS_INDEX_PATH, json=index_data, headers=header)
+
+                                if mod_name in weapon_mods_data.keys():
+                                    index_data["name"] = weapon_mods_data[mod_name][0]
+                                    requests.post(BACKEND_HOST + VENDORS_INDEX_PATH, json=index_data, headers=header)
+
+                                    index_data["name"] = weapon_mods_data[mod_name][1]
+                                    requests.post(BACKEND_HOST + VENDORS_INDEX_PATH, json=index_data, headers=header)
 
                                 index_data["name"] = "weapon mod"
                                 requests.post(BACKEND_HOST + VENDORS_INDEX_PATH, json=index_data, headers=header)

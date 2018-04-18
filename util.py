@@ -31,7 +31,8 @@ aliases = {"lvoa": "Lvoa-C", "lwm4": "Lightweight M4",
 vendor_aliases = {
     "chd": "critical hit damage", "chc": "critical hit chance", "vest": "chest",
     "pred": "Predator's mark", "sp": "Skill Power", "ar damage": "Assault Rifle Damage",
-    "dte": "damage to elites", "sh": "Skill haste",
+    "dte": "damage to elites", "sh": "Skill haste", "stamina mod": "stamina mods", 
+    "firearms mod": "firearms mods", "electronics mod": "electronics mods"
     "lvoa": "Lvoa-C", "lwm4": "Lightweight M4",
     "rpk": "rpk-74",
     "fm": "Final Measure", "ls": "Lone Star",
@@ -54,5 +55,6 @@ vendor_aliases = {
     "military ak": "military AK-47", "black market ak": "Black Market AK-74",
     "pred mark": "Predator's Mark",
     "sh": "Skill Haste", "ead": "Enemy Armor Damage",
-    "extended mag": "extended magazine"
+    "extended mag": "extended magazine", "scope": "Scopes", "grip": "Grips", "mag": "Magazines",
+    "magazine": "Magazines"
 }
