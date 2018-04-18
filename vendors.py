@@ -100,9 +100,9 @@ def main():
                 "fields": "name,category,Mod_Type"
             }
 
-            weapon_mods_data = requests.get(BACKEND_HOST + '/document/weaponmods', params=weapons_param, headers=header).json()
-            weapon_mods_dats = convert_to_dict(weapon_mods_data['data'])
-
+            weapon_mods_data = requests.get(BACKEND_HOST + '/document/weaponmods', params=weapon_mods_param, headers=header).json()
+            weapon_mods_data = convert_to_dict(weapon_mods_data['data'])
+ 
             if result_is_ok(reset_resp):
                 print("reset of %s table successful" % category)
 

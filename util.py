@@ -33,7 +33,7 @@ vendor_aliases = {
     "pred": "Predator's mark", "sp": "Skill Power", "ar damage": "Assault Rifle Damage",
     "dte": "damage to elites", "sh": "Skill haste", "stamina mods": "stamina mod", 
     "firearms mods": "firearms mod", "electronics mods": "electronics mod",
-    "lvoa": "Lvoa-C", "lwm4": "Lightweight M4",
+    "lvoa": "Lvoa-C", "lwm4": "Lightweight M4", "hsd": "headshot damage",
     "rpk": "rpk-74",
     "fm": "Final Measure", "ls": "Lone Star",
         "urban mdr": "MDR Battle Rifle",
