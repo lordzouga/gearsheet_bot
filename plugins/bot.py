@@ -12,6 +12,9 @@ import time
 
 import util
 import requests
+import vendors
+
+from gevent.lock import BoundedSemaphore
 
 BACKEND_HOST = "http://localhost:9000"
 SESSION_HEADER = 'X-BB-SESSION'
@@ -50,6 +53,7 @@ class GearSheetPlugin(Plugin):
     names = {}
     vendor_names = {}
     logger = None
+    lock = None
 
     def __init__(self, bot, config):
         super().__init__(bot, config)
@@ -77,9 +81,7 @@ class GearSheetPlugin(Plugin):
 
         conn.close()
 
-        vendors_param = {
-                "fields": "name"
-            }
+        vendors_param = { "fields": "name" }
         response = requests.get(BACKEND_HOST + '/document/vendors-index', params=vendors_param, headers={SESSION_HEADER: self.session})
         self.vendor_names = {i['name'] for i in response.json()['data']}
 
@@ -94,14 +96,16 @@ class GearSheetPlugin(Plugin):
         fh.setFormatter(formatter)
 
         self.logger.addHandler(fh)
+        
+        self.lock = BoundedSemaphore(1)
 
 
     @Plugin.command('ping')
     def command_ping(self, event):
         event.msg.reply('Pong!')
 
-    def log_it(self, event, param):
-        self.logger.info("%s - %s - %s - %s" % (str(event.author).replace(" ", "_"), event.guild.name.replace(" ", "_"), event.guild.id, param))
+    def log_it(self, event, param, command):
+        self.logger.info("%s - %s - %s - %s - %s" % (command, str(event.author).replace(" ", "_"), event.guild.name.replace(" ", "_"), event.guild.id, param))
 
     @Plugin.command('g')
     @Plugin.command('s')
@@ -121,7 +125,7 @@ My reddit thread: https://goo.gl/638vpi.
 
 **Credit** to @Pfftman#6620 | /u/pfftman | PSN: pfftman'''
 
-                self.log_it(event, param)
+                self.log_it(event, param, "gearsheet")
                 event.msg.reply(help_text)
                 return
 
@@ -137,8 +141,8 @@ My reddit thread: https://goo.gl/638vpi.
             conn.close()
             # time_diff = time.time() - start_time
 
-            if "Pfftman" not in str(event.author):
-                self.log_it(event, param)
+            if event.author.id not in [195168390476726272]:
+                self.log_it(event, param, "gearsheet")
 
             response = json.loads(response)
             if response['result'] != 'ok':
@@ -183,10 +187,25 @@ My reddit thread: https://goo.gl/638vpi.
     def command_vendors(self, event):
         if len(event.args) > 0:
             param = ' '.join(event.args).lower()
-
             splitted = param.strip().split(" with ")
             
+            if event.author.id not in [195168390476726272]:
+                self.log_it(event, param, "vendors")
 
+            if param.strip(' ') == 'update' and event.author.id in { 195168390476726272, 177627571700105217 }:
+                if not self.lock.locked():
+                    self.lock.acquire()
+
+                    event.msg.reply("Vendors update initiated by Master @%s" % (str(event.author)))
+                    vendors.main()
+
+                    self.lock.release()
+                    event.msg.reply("Vendors update done")
+                else:
+                    event.msg.reply("Vendors update is already running")
+
+                return
+            
             arg = None
             param_obj = None
             
@@ -223,16 +242,16 @@ My reddit thread: https://goo.gl/638vpi.
                 if len(temp) > 0:
                     gear_piece = query.strip(" " + temp[0])
                     if gear_piece in self.names:
-                        event.msg.reply('Sorry, no gearset item like that this week')
+                        event.msg.reply('Sorry, no gearset or highend item like that this week')
                         return
                     else:
-                        event.msg.reply('Are you sure this gearset exists?')
+                        event.msg.reply('Are you sure %s exists?' % query)
                         return
                 elif query in ["performance mod", "stamina mod", "electronics mod", "weapon mod"]:
                     event.msg.reply('Sorry, no mod like that this week')
                     return
-                elif query in self.names or query in self.vendor_names:
-                    event.msg.reply("Sorry, nothing like that this week")
+                elif util.aliases or query in self.names or query in self.vendor_names:
+                    event.msg.reply("Sorry, no item like that this week")
                     return
                 else:
                     event.msg.reply("Are you sure this item exists?")

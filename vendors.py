@@ -250,4 +250,5 @@ def main():
         print(hash_value)
         # len(data)
 
-main()
+if __name__ == '__main__':
+    main()
