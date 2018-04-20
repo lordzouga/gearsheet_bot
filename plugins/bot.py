@@ -208,7 +208,7 @@ My reddit thread: https://goo.gl/638vpi.
                         "server_id": event.guild.id
                     }
 
-                    requests.post("/document/vendors-update", json=info, headers={SESSION_HEADER: self.session})
+                    requests.post(BACKEND_HOST + "/document/vendors-update", json=info, headers={SESSION_HEADER: self.session})
 
                     # release lock
                     self.lock.release()
