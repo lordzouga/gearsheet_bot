@@ -280,18 +280,25 @@ My reddit thread: https://goo.gl/638vpi.
         embed.title = "Last Updated %s" % last_update_time_ago
         embed.description = "by %s" % info['updater']
         
-        week = 60 * 60 * 24 * 7
+        day = 60 * 60 * 24
         curTime = time.time()
-        week_offset = curTime % week
-        week_start = curTime - week_offset
+        day_offset = curTime % day
+        day_start = curTime - day_offset
 
-        next_vendor_reset = week_start + (6 * 24 * 60 * 60)
-        next_reset_date = datetime.fromtimestamp(next_vendor_reset)
+        day_start_date = datetime.fromtimestamp(day_start)
+        offset = 7 - day_start_date.weekday()
 
-        curTime = datetime.fromtimestamp(curTime)
+        reset_text = ""
+        if offset:
+            reset_stamp = curTime + (offset * day)
+            reset = datetime.fromtimestamp(reset_stamp)
 
-        time_till_reset = timeago.format(next_reset_date, curTime)
-        embed.add_field(name='Next Vendor Reset (in game)', value=time_till_reset, inline=True)
+            now = datetime.fromtimestamp(curTime)
+            reset_text = timeago.format(reset, now)
+        else:
+            reset_text = "in 7 days"
+
+        embed.add_field(name='Next Vendor Reset (in game)', value=reset_text, inline=True)
 
         return embed
 
