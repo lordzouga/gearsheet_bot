@@ -6,6 +6,7 @@ import urllib.parse
 import http.client
 import logging
 from fuzzywuzzy import fuzz
+import timeago
 
 import json
 import time
@@ -15,6 +16,7 @@ import requests
 import vendors
 
 from gevent.lock import BoundedSemaphore
+from datetime import datetime
 
 BACKEND_HOST = "http://localhost:9000"
 SESSION_HEADER = 'X-BB-SESSION'
@@ -192,35 +194,17 @@ My reddit thread: https://goo.gl/638vpi.
             if event.author.id not in [195168390476726272]:
                 self.log_it(event, param, "vendors")
 
-            if param.strip(' ') == 'update' and event.author.id in { 195168390476726272, 177627571700105217 }:
-                if not self.lock.locked():
-                    start_time = time.time()
-                    self.lock.acquire()
-
-                    event.msg.reply("Vendors update initiated by Master @%s" % (str(event.author)))
-                    vendors.main()
-
-                    # log the update in the db
-                    info = {
-                        "updater": str(event.author),
-                        "time": int(time.time()),
-                        "server": event.guild.name,
-                        "server_id": event.guild.id
-                    }
-
-                    requests.post(BACKEND_HOST + "/document/vendors-update", json=info, headers={SESSION_HEADER: self.session})
-
-                    # release lock
-                    self.lock.release()
-
-                    duration = time.time() - start_time
-                    event.msg.reply("Update done. Duration: %ss" % duration)
+            # routines related to updatee
+            if param.strip(' ') == 'update':
+                if event.author.id in { 195168390476726272, 177627571700105217 }:
+                    self.handle_update(event)
                 else:
-                    event.msg.reply("update is already running")
-
+                    event.msg.reply("Haha! no")
                 return
-            else:
-                event.msg.reply("Haha! no")
+            
+            if param.strip(' ') == 'status':
+                reply = self.render_status_command()
+                event.msg.reply(embed=reply)
                 return
             
             arg = None
@@ -231,6 +215,7 @@ My reddit thread: https://goo.gl/638vpi.
                 if item in util.vendor_aliases.keys():
                     splitted[i] = util.vendor_aliases[item].lower()
             
+            # determine the kind of request to send to the server
             query = splitted[0]    
             if len(splitted) == 1: # this block takes care of args without 'with'
                 param_obj = {
@@ -253,30 +238,7 @@ My reddit thread: https://goo.gl/638vpi.
 
             if response.json()['result'] != 'ok': # item not found in vendors list
                 # try to determine if it was a bad input from user or an item that doesn't exist
-                
-                pieces = ["vest", "backpack", "mask", "gloves", "knee pads", "holster"]
-                temp = [i for i in pieces if (" " + i) in query]
-                if len(temp) > 0:
-                    gear_piece = query.strip(" " + temp[0])
-                    if gear_piece in self.names:
-                        event.msg.reply('Sorry, no gearset or highend item like that this week')
-                        return
-                    else:
-                        event.msg.reply('Are you sure %s exists?' % query)
-                        return
-                elif query in ["performance mod", "stamina mod", "electronics mod", "weapon mod"]:
-                    event.msg.reply('Sorry, no mod like that this week')
-                    return
-                elif util.aliases or query in self.names or query in self.vendor_names:
-                    event.msg.reply("Sorry, no item like that this week")
-                    return
-                else:
-                    event.msg.reply("Are you sure this item exists?")
-                    return
-
-                ''' is_gear_piece = len() > 0
-
-                event.msg.reply('```item not found```')'''
+                self.reply_item_not_found(query)
                 return
             
             data = remove_duplicates(response.json()["data"])
@@ -301,8 +263,84 @@ My reddit thread: https://goo.gl/638vpi.
             if embed != None:
                 event.msg.reply(embed=embed)
     
-    def send_item_not_found(self):
-        pass
+    def render_status_command(self):
+        param = {
+            "orderBy": "time desc",
+            "recordsPerPage": 1,
+            "page": 0
+        }
+
+        res = requests.get(BACKEND_HOST + '/document/vendors-update', params=param, headers={SESSION_HEADER: self.session}).json()
+        info = res['data'][0]
+
+        last_updated = datetime.fromtimestamp(info['time'])
+        last_update_time_ago = timeago.format(last_updated, datetime.now())
+
+        embed = MessageEmbed()
+        embed.title = "Last Updated %s" % last_update_time_ago
+        embed.description = "by %s" % info['updater']
+        
+        week = 60 * 60 * 24 * 7
+        curTime = time.time()
+        week_offset = curTime % week
+        week_start = curTime - week_offset
+
+        next_vendor_reset = week_start + (6 * 24 * 60 * 60)
+        next_reset_date = datetime.fromtimestamp(next_vendor_reset)
+
+        curTime = datetime.fromtimestamp(curTime)
+
+        time_till_reset = timeago.format(next_reset_date, curTime)
+        embed.add_field(name='Next Vendor Reset (in game)', value=time_till_reset, inline=True)
+
+        return embed
+
+    def reply_item_not_found(self, query):
+        pieces = ["vest", "backpack", "mask", "gloves", "knee pads", "holster"]
+        temp = [i for i in pieces if (" " + i) in query]
+
+        if len(temp) > 0:
+            gear_piece = query.strip(" " + temp[0])
+            if gear_piece in self.names:
+                event.msg.reply('Sorry, no gearset or highend item like that this week')
+            else:
+                event.msg.reply('Are you sure %s exists?' % query)
+        elif query in ["performance mod", "stamina mod", "electronics mod", "weapon mod"]:
+            event.msg.reply('Sorry, no mod like that this week')
+
+        elif util.aliases or query in self.names or query in self.vendor_names:
+            event.msg.reply("Sorry, no item like that this week")
+
+        else:
+            event.msg.reply("Are you sure this item exists?")
+
+
+    def handle_update(self, event):
+        if not self.lock.locked():
+            start_time = time.time()
+            self.lock.acquire()
+
+            event.msg.reply("Vendors update initiated by Master @%s" % (str(event.author)))
+            vendors.update()
+
+            # log the update in the db
+            info = {
+                "updater": str(event.author),
+                "time": int(time.time()),
+                "server": event.guild.name,
+                "server_id": event.guild.id
+            }
+
+            requests.post(BACKEND_HOST + "/document/vendors-update", json=info, headers={SESSION_HEADER: self.session})
+
+            # release lock
+            self.lock.release()
+
+            duration = time.time() - start_time
+            event.msg.reply("Update done. Duration: `{0:.2f}s`".format(duration))
+        else:
+            event.msg.reply("update is already running")
+
 
     def render_multiple_items(self, items):
         embed = MessageEmbed()

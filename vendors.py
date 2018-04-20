@@ -64,7 +64,7 @@ def convert_to_dict(items):
     
     return temp
 
-def main():
+def update():
     session = login_to_backend()
     if not session:
         return
@@ -251,4 +251,4 @@ def main():
         # len(data)
 
 if __name__ == '__main__':
-    main()
+    update()
