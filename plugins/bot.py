@@ -194,16 +194,33 @@ My reddit thread: https://goo.gl/638vpi.
 
             if param.strip(' ') == 'update' and event.author.id in { 195168390476726272, 177627571700105217 }:
                 if not self.lock.locked():
+                    start_time = time.time()
                     self.lock.acquire()
 
                     event.msg.reply("Vendors update initiated by Master @%s" % (str(event.author)))
                     vendors.main()
 
-                    self.lock.release()
-                    event.msg.reply("Vendors update done")
-                else:
-                    event.msg.reply("Vendors update is already running")
+                    # log the update in the db
+                    info = {
+                        "updater": str(event.author),
+                        "time": int(time.time()),
+                        "server": event.guild.name,
+                        "server_id": event.guild.id
+                    }
 
+                    requests.post("/document/vendors-update", json=info, headers={SESSION_HEADER: self.session})
+
+                    # release lock
+                    self.lock.release()
+
+                    duration = time.time() - start_time
+                    event.msg.reply("Update done. Duration: %ss" % duration)
+                else:
+                    event.msg.reply("update is already running")
+
+                return
+            else:
+                event.msg.reply("Haha! no")
                 return
             
             arg = None
@@ -284,6 +301,9 @@ My reddit thread: https://goo.gl/638vpi.
             if embed != None:
                 event.msg.reply(embed=embed)
     
+    def send_item_not_found(self):
+        pass
+
     def render_multiple_items(self, items):
         embed = MessageEmbed()
         embed.description = "found in %s items" % len(items)
