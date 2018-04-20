@@ -84,7 +84,7 @@ def main():
         print("Got data from %s category and it has %s items" % (category, len(data)))
 
         hash_value = hash(json.dumps(data))
-        if not (category in CATEGORY_HASHES.keys() and CATEGORY_HASHES[category] == hash_value):
+        if True:#not (category in CATEGORY_HASHES.keys() and CATEGORY_HASHES[category] == hash_value):
             # reset the data for the scope
             collection_name = 'vendors-' + category
             scope_to_reset = [collection_name]
