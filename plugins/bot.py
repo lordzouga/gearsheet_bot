@@ -25,6 +25,8 @@ VENDOR_WEAPON_MODS = 'weapon-mods'
 VENDOR_GEAR_MODS = 'gear-mods'
 VENDOR_RECOMMENDATIONS = 'recommendations'
 VENDOR_GEAR = 'gear'
+scopes = ['weapontalents', 'playertalents', 'geartalents', 'gearsets', 'weapons', 'weaponmods', 'exoticgears',
+              'gearattributes']
 
 def get_collection_name(name):
     return "vendors-%s" % name
@@ -107,7 +109,8 @@ class GearSheetPlugin(Plugin):
         event.msg.reply('Pong!')
 
     def log_it(self, event, param, command):
-        self.logger.info("%s - %s - %s - %s - %s" % (command, str(event.author).replace(" ", "_"), event.guild.name.replace(" ", "_"), event.guild.id, param))
+        if event.author.id not in [195168390476726272]:
+            self.logger.info("%s - %s - %s - %s - %s" % (command, str(event.author).replace(" ", "_"), event.guild.name.replace(" ", "_"), event.guild.id, param))
 
     @Plugin.command('g')
     @Plugin.command('s')
@@ -133,7 +136,22 @@ My reddit thread: https://goo.gl/638vpi.
 
             if param in util.aliases.keys():
                 param = util.aliases[param].lower()
+            
+            if param in scopes and param != 'weapons':
+                self.log_it(event, param, "gearsheet")
+                query = {
+                    'fields': 'name',
+                    'orderBy': 'name'
+                }
+                names = requests.get(BACKEND_HOST + "/document/%s" % param, query, headers={SESSION_HEADER: self.session}).json()
+                # print(names)
+                name_list = ['`' + i["name"] + '`' for i in names["data"]]
 
+                event.msg.reply('there are **%s items**' % len(name_list))
+                event.msg.reply(",  ".join(name_list))
+
+                return
+            
             # start_time = time.time()
             conn = http.client.HTTPConnection("localhost:9000")
             conn.request('GET', '/plugin/bot.index?%s' % (urllib.parse.urlencode({"param": param})),
@@ -143,8 +161,8 @@ My reddit thread: https://goo.gl/638vpi.
             conn.close()
             # time_diff = time.time() - start_time
 
-            if event.author.id not in [195168390476726272]:
-                self.log_it(event, param, "gearsheet")
+            
+            self.log_it(event, param, "gearsheet")
 
             response = json.loads(response)
             if response['result'] != 'ok':

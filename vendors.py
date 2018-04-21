@@ -128,6 +128,10 @@ def update():
 
                                 requests.post(BACKEND_HOST + VENDORS_INDEX_PATH, json=index_data, headers=header)
                                 
+                                if item['type'] == 'exotic':
+                                    index_data["name"] = "exotic"
+                                    requests.post(BACKEND_HOST + VENDORS_INDEX_PATH, json=index_data, headers=header)
+
                                 if weapon_name in weapons_data.keys():
                                     index_data["name"] = weapons_data[weapon_name][0] # weapon variant
                                     requests.post(BACKEND_HOST + VENDORS_INDEX_PATH, json=index_data, headers=header)
