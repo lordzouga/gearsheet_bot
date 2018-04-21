@@ -34,7 +34,7 @@ vendor_aliases = {
     "dte": "damage to elites", "sh": "Skill haste", "stamina mods": "stamina mod", 
     "firearms mods": "firearms mod", "electronics mods": "electronics mod",
     "lvoa": "Lvoa-C", "lwm4": "Lightweight M4", "hsd": "headshot damage",
-    "rpk": "rpk-74",
+    "rpk": "rpk-74", "edr": "exotic damage resilience",
     "fm": "Final Measure", "ls": "Lone Star",
         "urban mdr": "MDR Battle Rifle",
     "ab": "Alpha Bridge", "alphabridge": "Alpha Bridge",

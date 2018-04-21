@@ -342,6 +342,7 @@ My reddit thread: https://goo.gl/638vpi.
     def render_multiple_items(self, items):
         embed = MessageEmbed()
         embed.description = "found in %s items" % len(items)
+        embed.color = 0x3366FF
 
         for item in items:
             collection = item["@class"]
@@ -388,6 +389,11 @@ My reddit thread: https://goo.gl/638vpi.
         
         talents = " **-** ".join([ i for i in [weapon['talent1'], weapon['talent2'], weapon['talent3']] if i.strip() != "-"])
         embed.add_field(name='Talents', value=talents)
+        
+        if weapon['type'] == 'exotic':
+            embed.color = 0xCF5A2E
+        else:
+            embed.color = 0xDA9513
 
         return embed
     
@@ -401,6 +407,11 @@ My reddit thread: https://goo.gl/638vpi.
         embed.add_field(name='Stat', value=gearmod['stat'], inline=True)
         embed.add_field(name='Attribute', value=gearmod['attribute'])
 
+        if gearmod['type'] == 'purple-mod':
+            embed.color = 0x993D78
+        else:
+            embed.color = 0xDA9513
+        
         return embed
     
     def render_vendor_weapon_mod(self, weaponmod):
@@ -413,6 +424,7 @@ My reddit thread: https://goo.gl/638vpi.
         # embed.add_field(name='Stat', value=weaponmod[''], inline=True)
         attr = " **-** ".join(weaponmod["attributes"].split('<br/>'))
         embed.add_field(name='Attribute', value=attr)
+        embed.color = 0xDA9513
 
         return embed
 
@@ -442,6 +454,11 @@ My reddit thread: https://goo.gl/638vpi.
         if minor_attr:
             embed.add_field(name='Minor Attribute(s)', value=minor_attr, inline=True)
         
+        if gear['rarity'] == 'header-he':
+            embed.color = 0xDA9513
+        else:
+            embed.color = 0x07C973
+        
         return embed
     
     def render_weapon_talent(self, talent):
@@ -463,6 +480,8 @@ My reddit thread: https://goo.gl/638vpi.
         if 'note' in talent.keys():
             embed.set_footer(text=talent['note'])
 
+        embed.color = 0xDA9513
+
         return embed
 
     def render_player_talent(self, talent):
@@ -474,6 +493,8 @@ My reddit thread: https://goo.gl/638vpi.
         embed.add_field(name='Type', value=talent['type'], inline=True)
         embed.add_field(name='Benefits', value=talent['benefit'], inline=True)
 
+        embed.color = 0xDA9513
+
         return embed
 
     def render_gear_talent(self, talent):
@@ -483,6 +504,9 @@ My reddit thread: https://goo.gl/638vpi.
         embed.description = talent['description']
 
         embed.set_footer(text='Rolls on %s' % talent['slot'])
+
+        embed.color = 0xDA9513
+
         return embed
 
     def render_gearset(self, gearset):
@@ -536,6 +560,9 @@ My reddit thread: https://goo.gl/638vpi.
             description = weapon['talent']['description']
             embed.description = description
 
+        embed.color = 0xDA9513
+
+
         return embed
 
     def normalize(self, item):  # don't give empty params to bot embed
@@ -559,6 +586,8 @@ My reddit thread: https://goo.gl/638vpi.
         embed.set_footer(text="All mods will roll their Primary Attributes, "
                               "as well as an additional 2 attributes")
 
+        embed.color = 0xDA9513
+
         return embed
 
     def render_exotic_gear(self, exotic_gear):
@@ -567,6 +596,7 @@ My reddit thread: https://goo.gl/638vpi.
         embed.title = exotic_gear['name']
         embed.description = exotic_gear['description']
 
+        embed.color = 0xCF5A2E
         return embed
 
     def render_gear_attribute(self, gear_attribute):
@@ -581,5 +611,7 @@ My reddit thread: https://goo.gl/638vpi.
             elif key in key_names:
                 val = gear_attribute[key]
                 embed.add_field(name=key.replace("_", " "), value=val, inline=True)
+        
+        embed.color = 0xDA9513
 
         return embed
