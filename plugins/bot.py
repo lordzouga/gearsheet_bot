@@ -360,7 +360,7 @@ My reddit thread: https://goo.gl/638vpi.
     def render_multiple_items(self, items):
         embed = MessageEmbed()
         embed.description = "found in %s items" % len(items)
-        embed.color = 0x3366FF
+        embed.color = 0xDA9513
 
         for item in items:
             collection = item["@class"]
@@ -374,7 +374,15 @@ My reddit thread: https://goo.gl/638vpi.
                 major_attrs = item["major"].strip().strip("-").split("<br/>")
                 minor_attrs = item["minor"].strip().strip("-").split("<br/>")
 
-                all_attrs = "  **|**  ".join([i for i in major_attrs + minor_attrs if i != ""])
+                main_stats = []
+                if (item['fire'].strip().strip('-')):
+                    main_stats.append("**Firearms:** %s" % item['fire'])
+                if (item['stam'].strip().strip('-')):
+                    main_stats.append("**Stamina:** %s" % item['stam'])
+                if (item['elec'].strip().strip('-')):
+                    main_stats.append("**Electronics:** %s" % item['elec'])
+
+                all_attrs = "  **|**  ".join(main_stats + [i for i in major_attrs + minor_attrs if i != ""])
                 
                 body = "`%s`  |  %s" % (item["vendor"], all_attrs)
 
