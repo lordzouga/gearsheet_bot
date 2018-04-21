@@ -6,7 +6,7 @@ import urllib.parse
 import http.client
 import logging
 from fuzzywuzzy import fuzz
-import timeago
+import arrow
 
 import json
 import time
@@ -238,7 +238,7 @@ My reddit thread: https://goo.gl/638vpi.
 
             if response.json()['result'] != 'ok': # item not found in vendors list
                 # try to determine if it was a bad input from user or an item that doesn't exist
-                self.reply_item_not_found(query)
+                self.reply_item_not_found(query, event)
                 return
             
             data = remove_duplicates(response.json()["data"])
@@ -272,37 +272,27 @@ My reddit thread: https://goo.gl/638vpi.
 
         res = requests.get(BACKEND_HOST + '/document/vendors-update', params=param, headers={SESSION_HEADER: self.session}).json()
         info = res['data'][0]
+        
+        today = arrow.utcnow()
+        reset_text = ""
 
-        last_updated = datetime.fromtimestamp(info['time'])
-        last_update_time_ago = timeago.format(last_updated, datetime.now())
+        if today.weekday() == 5:
+            reset_text = "in 6 days"
+        else:
+            temp = today.shift(weekday=5)
+            reset_text = temp.humanize()
+        
+        last_updated = arrow.Arrow.fromtimestamp(info['time'])
 
         embed = MessageEmbed()
-        embed.title = "Last Updated %s" % last_update_time_ago
+        embed.title = "Last Updated %s" % last_updated.humanize()
         embed.description = "by %s" % info['updater']
         
-        day = 60 * 60 * 24
-        curTime = time.time()
-        day_offset = curTime % day
-        day_start = curTime - day_offset
-
-        day_start_date = datetime.fromtimestamp(day_start)
-        offset = 7 - day_start_date.weekday()
-
-        reset_text = ""
-        if offset:
-            reset_stamp = curTime + (offset * day)
-            reset = datetime.fromtimestamp(reset_stamp)
-
-            now = datetime.fromtimestamp(curTime)
-            reset_text = timeago.format(reset, now)
-        else:
-            reset_text = "in 7 days"
-
         embed.add_field(name='Next Vendor Reset (in game)', value=reset_text, inline=True)
 
         return embed
 
-    def reply_item_not_found(self, query):
+    def reply_item_not_found(self, query, event):
         pieces = ["vest", "backpack", "mask", "gloves", "knee pads", "holster"]
         temp = [i for i in pieces if (" " + i) in query]
 
