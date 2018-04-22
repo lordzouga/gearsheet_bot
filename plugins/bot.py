@@ -27,6 +27,7 @@ VENDOR_RECOMMENDATIONS = 'recommendations'
 VENDOR_GEAR = 'gear'
 scopes = ['weapontalents', 'playertalents', 'geartalents', 'gearsets', 'weapons', 'weaponmods', 'exoticgears',
               'gearattributes']
+weapon_types = ['smgs', 'lmgs', 'mmrs', 'pistols', 'ars']
 
 def get_collection_name(name):
     return "vendors-%s" % name
@@ -209,6 +210,11 @@ My reddit thread: <https://goo.gl/638vpi>.
         if len(event.args) > 0:
             param = ' '.join(event.args).lower()
             splitted = param.strip().split(" with ")
+
+            # handle requests from weapons in plural form
+            if splitted[0] in weapon_types:
+                temp = splitted[0]
+                splitted[0] = temp[:-1]
             
             if event.author.id not in [195168390476726272]:
                 self.log_it(event, param, "vendors")
