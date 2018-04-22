@@ -126,7 +126,7 @@ Example: to find out what *Responsive* talent does, use `!gearsheet responsive`\
 Popular community nicknames for items are also supported.\n
 **PRO TIP**: `!sheet responsive` will also work.
 
-My reddit thread: https://goo.gl/638vpi.
+My reddit thread: <https://goo.gl/638vpi>.
 
 **Credit** to @Pfftman#6620 | /u/pfftman | PSN: pfftman'''
 
@@ -204,6 +204,7 @@ My reddit thread: https://goo.gl/638vpi.
 
     @Plugin.command('v')
     @Plugin.command('vendors')
+    @Plugin.command('vendor')
     def command_vendors(self, event):
         if len(event.args) > 0:
             param = ' '.join(event.args).lower()
@@ -213,8 +214,8 @@ My reddit thread: https://goo.gl/638vpi.
                 self.log_it(event, param, "vendors")
 
             # routines related to updatee
-            if param.strip(' ') == 'update':
-                if event.author.id in { 195168390476726272, 177627571700105217 }:
+            if param.strip(' ') == 'update': #pfft              #ruben              #noots              #ahmad
+                if event.author.id in { 195168390476726272, 177627571700105217, 196408555132289024, 99511296604520448 }:
                     self.handle_update(event)
                 else:
                     event.msg.reply("Haha! no")
@@ -280,6 +281,8 @@ My reddit thread: https://goo.gl/638vpi.
             
             if embed != None:
                 event.msg.reply(embed=embed)
+        else:
+            event.msg.reply('<http://rubenalamina.mx/the-division-weekly-vendor-reset/>')
     
     def render_status_command(self):
         param = {

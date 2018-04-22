@@ -35,7 +35,7 @@ vendor_aliases = {
     "firearms mods": "firearms mod", "electronics mods": "electronics mod",
     "electronic mod": "electronics mod", "firearm mod": "firearms mod",
     "mods": "mod", "performance mods": "performance mod", "pulse chd": "pulse critical hit damage",
-    "exotics": "exotic",
+    "exotics": "exotic", "weapon mods": "weapon mod",
     "lvoa": "Lvoa-C", "lwm4": "Lightweight M4", "hsd": "headshot damage",
     "rpk": "rpk-74", "edr": "exotic damage resilience",
     "fm": "Final Measure", "ls": "Lone Star",
