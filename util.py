@@ -38,6 +38,7 @@ vendor_aliases = {
     "exotics": "exotic", "weapon mods": "weapon mod", "ally heal": "first aid ally heal",
     "self heal": "first aid self heal", "muzzles": "suppressors", "sniper": "MMR",
     "snipers": "MMR", "kill xp": "increased kill xp", "purple mods": "purple mod",
+    "gear mod": "mod", "gear mods": "mods",
     "lvoa": "Lvoa-C", "lwm4": "Lightweight M4", "hsd": "headshot damage",
     "rpk": "rpk-74", "edr": "exotic damage resilience",
     "fm": "Final Measure", "ls": "Lone Star",
