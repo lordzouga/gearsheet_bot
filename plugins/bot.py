@@ -104,11 +104,17 @@ class GearSheetPlugin(Plugin):
         
         self.lock = BoundedSemaphore(1)
 
+        #print(self.state.guilds)
 
     @Plugin.command('ping')
     def command_ping(self, event):
-        event.msg.reply('Pong!')
+        event.msg.reply("Pong!")
 
+    @Plugin.command('servers')
+    def command_servers(self, event):
+        if event.author.id in [195168390476726272]:
+            event.msg.reply("I am currently installed on %s servers" % len(self.state.guilds))
+    
     def log_it(self, event, param, command):
         if event.author.id not in [195168390476726272]:
             self.logger.info("%s - %s - %s - %s - %s" % (command, str(event.author).replace(" ", "_"), event.guild.name.replace(" ", "_"), event.guild.id, param))
