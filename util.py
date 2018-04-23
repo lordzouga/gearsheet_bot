@@ -39,6 +39,7 @@ vendor_aliases = {
     "self heal": "first aid self heal", "muzzles": "suppressors", "sniper": "MMR",
     "snipers": "MMR", "kill xp": "increased kill xp", "purple mods": "purple mod",
     "gear mod": "mod", "gear mods": "mods","predator's": "predator's mark", "predator": "predator's mark",
+    "haste": "skill haste",
     "lvoa": "Lvoa-C", "lwm4": "Lightweight M4", "hsd": "headshot damage",
     "rpk": "rpk-74", "edr": "exotic damage resilience",
     "fm": "Final Measure", "ls": "Lone Star",

@@ -1,5 +1,6 @@
 from disco.bot import Plugin
 from disco.types.message import MessageEmbed  # We need this to create the embed
+from disco.types.user import Game, GameType, Status
 
 import urllib.request
 import urllib.parse
@@ -106,6 +107,15 @@ class GearSheetPlugin(Plugin):
 
         #print(self.state.guilds)
 
+    #in a plugin class
+    @Plugin.listen('Ready')
+    def on_ready(self, event):
+        self.client.update_presence(Status.online, Game(type=GameType.default, name='!help for guide'))
+
+    @Plugin.command('help')
+    def command_help(self, event):
+        event.msg.reply('Usage Guide <https://docs.google.com/document/d/1G1d1oj0qDbv6yf7EOEkGAHN40OqsdkXRrxCHo_3QC2w/view>')
+
     @Plugin.command('ping')
     def command_ping(self, event):
         event.msg.reply("Pong!")
@@ -115,6 +125,10 @@ class GearSheetPlugin(Plugin):
         if event.author.id in [195168390476726272]:
             event.msg.reply("I am currently installed on %s servers" % len(self.state.guilds))
     
+    @Plugin.command('add')
+    def command_add(self, event):
+        pass
+
     def log_it(self, event, param, command):
         if event.author.id not in [195168390476726272]:
             self.logger.info("%s - %s - %s - %s - %s" % (command, str(event.author).replace(" ", "_"), event.guild.name.replace(" ", "_"), event.guild.id, param))
