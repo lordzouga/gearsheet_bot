@@ -125,6 +125,10 @@ class GearSheetPlugin(Plugin):
         if event.author.id in [195168390476726272]:
             event.msg.reply("I am currently installed on %s servers" % len(self.state.guilds))
     
+    @Plugin.command('nicknames')
+    def command_nicknames(self, event):
+        event.msg.reply("<https://goo.gl/Brh1TF>")
+
     @Plugin.command('add')
     def command_add(self, event):
         pass
