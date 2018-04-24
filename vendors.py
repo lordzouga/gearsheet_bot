@@ -237,6 +237,9 @@ def update():
                                 index_data["name"] = "weapon mod"
                                 requests.post(BACKEND_HOST + VENDORS_INDEX_PATH, json=index_data, headers=header)
 
+                                index_data["name"] = "mod"
+                                requests.post(BACKEND_HOST + VENDORS_INDEX_PATH, json=index_data, headers=header)
+
                                 del index_data["attributes"]
 
                                 for attr in attrs:
