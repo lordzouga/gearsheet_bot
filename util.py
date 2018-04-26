@@ -44,7 +44,7 @@ vendor_aliases = {
     "rpk": "rpk-74", "edr": "exotic damage resilience",
     "fm": "Final Measure", "ls": "Lone Star",
         "urban mdr": "MDR Battle Rifle",
-    "ab": "Alpha Bridge", "alphabridge": "Alpha Bridge",
+    "ab": "AlphaBridge", "alphabridge": "AlphaBridge",
     "sasg": "sasg-12",
     "magnum": "586 Magnum", "bm ak": "Black Market AK-74",
     "bm rpk": "Black Market RPK-74 E", "d3": "D3-Fnc",

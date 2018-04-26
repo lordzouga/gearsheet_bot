@@ -114,6 +114,7 @@ class GearSheetPlugin(Plugin):
 
     @Plugin.command('help')
     def command_help(self, event):
+        self.log_it(event, "", "help")
         event.msg.reply('Usage Guide <https://docs.google.com/document/d/1G1d1oj0qDbv6yf7EOEkGAHN40OqsdkXRrxCHo_3QC2w/view>')
 
     @Plugin.command('ping')
@@ -127,6 +128,7 @@ class GearSheetPlugin(Plugin):
     
     @Plugin.command('nicknames')
     def command_nicknames(self, event):
+        self.log_it(event, "", "nicknames")
         event.msg.reply("<https://goo.gl/Brh1TF>")
 
     @Plugin.command('add')
