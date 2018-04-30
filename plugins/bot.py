@@ -114,6 +114,11 @@ class GearSheetPlugin(Plugin):
 
     @Plugin.command('help')
     def command_help(self, event):
+        skip = { 81384788765712384 : "discord bot list"}
+                                
+        if event.guild.id in skip.keys():
+            return
+        
         self.log_it(event, "", "help")
         event.msg.reply('Usage Guide <https://docs.google.com/document/d/1G1d1oj0qDbv6yf7EOEkGAHN40OqsdkXRrxCHo_3QC2w/view>')
 
