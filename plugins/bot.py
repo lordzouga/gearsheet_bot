@@ -114,7 +114,7 @@ class GearSheetPlugin(Plugin):
 
     @Plugin.command('help')
     def command_help(self, event):
-        skip = { 81384788765712384 : "discord bot list"}
+        skip = { 264445053596991498 : "discord bot list"}
                                 
         if event.guild.id in skip.keys():
             return
