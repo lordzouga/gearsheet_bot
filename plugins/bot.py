@@ -88,7 +88,7 @@ class GearSheetPlugin(Plugin):
         conn.close()
 
         vendors_param = { "fields": "name" }
-        response = requests.get(BACKEND_HOST + '/document/vendors-index', params=vendors_param, headers={SESSION_HEADER: self.session})
+        response = requests.get(BACKEND_HOST + '/document/vendors-indexes', params=vendors_param, headers={SESSION_HEADER: self.session})
         self.vendor_names = {i['name'] for i in response.json()['data']}
 
         # init logging
