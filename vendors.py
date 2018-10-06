@@ -11,7 +11,7 @@ SESSION_HEADER = 'X-BB-SESSION'
 VENDOR_HOST = 'www.rubenalamina.mx'
 CATEGORY_HASHES = dict()
 PLUGIN_PATH = "/plugin/vendors.index"
-VENDORS_INDEX_PATH = "/document/vendors-index"
+VENDORS_INDEX_PATH = "/document/vendors-indexes"
 
 def login_to_backend():
     login = {"username": "bot", "password": "confedrate", "appcode": "gearsheet"}
@@ -71,7 +71,7 @@ def update():
 
     # reset the vendors index
     header = {SESSION_HEADER: session}
-    res = requests.post(BACKEND_HOST + PLUGIN_PATH, json=["vendors-index"], headers=header)
+    res = requests.post(BACKEND_HOST + PLUGIN_PATH, json=["vendors-indexes"], headers=header)
 
     if result_is_ok(res):
         print("index reset is successful")
